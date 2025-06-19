@@ -1,0 +1,65 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* إعدادات الوضع الداكن */
+  .dark body {
+    background-color: #121212;
+    color: #E5E5E5;
+  }
+
+  /* إعدادات الوضع الفاتح */
+  body {
+    background-color: #FFFFFF;
+    color: #000000;
+  }
+
+  /* تخصيص الزر أو الـ Switch */
+  .toggle-input {
+    width: 40px;
+    height: 20px;
+    background-color: #ddd;
+    border-radius: 9999px;
+    position: relative;
+    transition: background-color 0.3s;
+  }
+
+  .toggle-input:checked {
+    background-color: #4caf50; /* يمكنك تغيير اللون */
+  }
+
+  .toggle-input:checked::after {
+    content: '';
+    position: absolute;
+    left: 2px;
+    top: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: white;
+    transition: transform 0.3s;
+    transform: translateX(20px);
+  }
+  
+}
+@layer components {
+  .input-field {
+    @apply w-full px-4 py-2 rounded-md bg-gray-100 mb-3 outline-none focus:ring-2 focus:ring-[#a73439];
+  }
+
+  .btn-red {
+    @apply bg-[#a73439] text-white px-6 py-2 rounded-md hover:bg-[#912b2e] transition;
+  }
+}
+/* styles.css */
+.input-field {
+  @apply mb-3 p-3 rounded-full bg-white w-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#a73439] text-sm;
+}
+
+.btn-red {
+  @apply bg-[#a73439] text-white px-6 py-3 rounded-full hover:bg-[#922c2c] transition;
+}
+
+

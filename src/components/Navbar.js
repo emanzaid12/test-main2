@@ -95,9 +95,19 @@ const Navbar = () => {
           return (
             <Link
               key={index}
-              to={`/${path}`}
+              to={
+                page === "Home"
+                  ? "/"
+                  : `/${page.toLowerCase().replace(" ", "-")}`
+              }
               className={`hover:text-gray-300 transition-all ${
-                isActive ? "text-gray-300" : ""
+                location.pathname === "/" && page === "Home"
+                  ? "text-gray-300"
+                  : location.pathname.includes(
+                      page.toLowerCase().replace(" ", "-")
+                    ) && page !== "Home"
+                  ? "text-gray-300"
+                  : ""
               }`}
             >
               {page}

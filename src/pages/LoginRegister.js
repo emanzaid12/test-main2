@@ -7,16 +7,16 @@ import {
   FaEye,
   FaEyeSlash,
 } from "react-icons/fa";
-import '../index.css';
-import loginBg from "../assets/images/your-image.png";  // تأكد من أن المسار صحيح
+import "../index.css";
+import loginBg from "../assets/images/your-image.png";
 import { Link, useNavigate } from "react-router-dom";
 
 const LoginRegister = () => {
-  const [isSignIn, setIsSignIn] = useState(true); // التحكم بين الدخول والتسجيل
+  const [isSignIn, setIsSignIn] = useState(true);
   const [showSignInPassword, setShowSignInPassword] = useState(false);
   const [showSignUpPassword, setShowSignUpPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [userType, setUserType] = useState("user");  // القيمة الافتراضية هي "user"
+  const [userType, setUserType] = useState("user");
 
   const [signUpFirstName, setSignUpFirstName] = useState("");
   const [signUpLastName, setSignUpLastName] = useState("");
@@ -35,60 +35,92 @@ const LoginRegister = () => {
 
   const handleSignUp = async () => {
     if (signUpPassword !== signUpConfirmPassword) {
-      alert("كلمات المرور غير متطابقة");
+      alert("Passwords do not match");
       return;
     }
 
     try {
-      const response = await fetch("https://shopyapi.runasp.net/api/Auth/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          FirstName: signUpFirstName,
-          LastName: signUpLastName,
-          UserName: signUpUserName,
-          Email: signUpEmail,
-          Password: signUpPassword,
-          // تحديد القيمة المناسبة بناءً على نوع المستخدم
-          Role: userType === "user" ? 0 : 1,  // إرسال القيمة 0 للمستخدم و 1 للبائع
-        }),
-      });
+      const response = await fetch(
+        "https://shopyapi.runasp.net/api/Auth/register",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            FirstName: signUpFirstName,
+            LastName: signUpLastName,
+            UserName: signUpUserName,
+            Email: signUpEmail,
+            Password: signUpPassword,
+            Role: userType === "user" ? 0 : 1,
+          }),
+        }
+      );
 
       const data = await response.json();
 
       if (response.ok) {
-        alert("تم التسجيل بنجاح!");
+        alert("Registration successful!");
         navigate("/verify-notice");
       } else {
-        alert(`فشل التسجيل: ${data?.message || "حدث خطأ ما"}`);
+        alert(`Registration failed: ${data?.message || "An error occurred."}`);
       }
     } catch (error) {
-      alert("حدث خطأ في الاتصال بالـ API. حاول مرة أخرى.");
+      alert("An error occurred while connecting to the API. Please try again.");
+    }
+  };
+
+  const parseJwt = (token) => {
+    try {
+      const base64Url = token.split(".")[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split("")
+          .map(function (c) {
+            return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+          })
+          .join("")
+      );
+
+      return JSON.parse(jsonPayload);
+    } catch (e) {
+      return null;
     }
   };
 
   const handleSignIn = async () => {
     try {
-      const response = await fetch("https://shopyapi.runasp.net/api/Auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          Email: signInEmail,
-          Password: signInPassword,
-        }),
-      });
+      const response = await fetch(
+        "https://shopyapi.runasp.net/api/Auth/login",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            Email: signInEmail,
+            Password: signInPassword,
+          }),
+        }
+      );
 
       const data = await response.json();
 
       if (response.ok) {
         localStorage.setItem("authToken", data.token);
-        alert("تم تسجيل الدخول بنجاح!");
-        navigate("/dashboard");
+        alert("Login successful!");
+
+        const decoded = parseJwt(data.token);
+        const role = decoded?.role || decoded?.Role;
+
+        if (role === "seller" || role === "admin") {
+          navigate("/dashboard");
+        } else {
+          navigate("/");
+        }
       } else {
-        alert(`فشل تسجيل الدخول: ${data?.message || "Invalid email or password."}`);
+        alert(`Login failed: ${data?.message || "Invalid email or password."}`);
       }
     } catch (error) {
-      alert("حدث خطأ في الاتصال بالـ API. حاول مرة أخرى.");
+      alert("An error occurred while connecting to the API. Please try again.");
     }
   };
 
@@ -99,9 +131,13 @@ const LoginRegister = () => {
         style={{ backgroundImage: `url(${loginBg})` }}
       >
         <div className="w-[950px] h-[550px] bg-white shadow-2xl rounded-[100px] flex overflow-hidden relative transition-all duration-700">
-          {/* Sign In Form */}
+          {/* Sign In */}
           <div
-            className={`w-1/2 p-10 absolute top-0 h-full transition-all duration-700 ${isSignIn ? "translate-x-0 opacity-100 z-20" : "-translate-x-full opacity-0 z-0 pointer-events-none"}`}
+            className={`w-1/2 p-10 absolute top-0 h-full transition-all duration-700 ${
+              isSignIn
+                ? "translate-x-0 opacity-100 z-20"
+                : "-translate-x-full opacity-0 z-0 pointer-events-none"
+            }`}
           >
             <h2 className="text-3xl font-bold mb-6 text-center">Sign In</h2>
             <div className="flex justify-center gap-4 mb-4">
@@ -110,7 +146,9 @@ const LoginRegister = () => {
               <FaGoogle className="text-2xl text-gray-800 hover:text-red-800 cursor-pointer" />
               <FaGithub className="text-2xl text-gray-800 hover:text-red-800 cursor-pointer" />
             </div>
-            <p className="text-sm text-gray-600 mb-4 text-center">or use email and password</p>
+            <p className="text-sm text-gray-600 mb-4 text-center">
+              or use email and password
+            </p>
             <input
               type="email"
               placeholder="Email"
@@ -134,11 +172,13 @@ const LoginRegister = () => {
               </span>
             </div>
             <div className="text-center mb-4">
-              <Link to="/forgot-password" className="text-sm text-red-800 hover:underline">
+              <Link
+                to="/forgot-password"
+                className="text-sm text-red-800 hover:underline"
+              >
                 Forgot Password?
               </Link>
             </div>
-
             <button
               onClick={handleSignIn}
               className="bg-red-800 hover:bg-red-700 w-[200px] py-2 text-sm mx-auto block rounded-full text-white transition-all duration-300 hover:scale-105"
@@ -147,18 +187,26 @@ const LoginRegister = () => {
             </button>
           </div>
 
-          {/* Sign Up Form */}
+          {/* Sign Up */}
           <div
-            className={`w-1/2 p-10 absolute top-0 right-0 h-full transition-all duration-700 ${!isSignIn ? "translate-x-0 opacity-100 z-20" : "translate-x-full opacity-0 z-0 pointer-events-none"}`}
+            className={`w-1/2 p-10 absolute top-0 right-0 h-full transition-all duration-700 ${
+              !isSignIn
+                ? "translate-x-0 opacity-100 z-20"
+                : "translate-x-full opacity-0 z-0 pointer-events-none"
+            }`}
           >
-            <h2 className="text-3xl font-bold mb-6 text-center">Create Account</h2>
+            <h2 className="text-3xl font-bold mb-6 text-center">
+              Create Account
+            </h2>
             <div className="flex justify-center gap-4 mb-4">
               <FaFacebookF className="text-2xl text-gray-800 hover:text-red-800 cursor-pointer" />
               <FaInstagram className="text-2xl text-gray-800 hover:text-red-800 cursor-pointer" />
               <FaGoogle className="text-2xl text-gray-800 hover:text-red-800 cursor-pointer" />
               <FaGithub className="text-2xl text-gray-800 hover:text-red-800 cursor-pointer" />
             </div>
-            <p className="text-sm text-gray-600 mb-4 text-center">or use email for registration</p>
+            <p className="text-sm text-gray-600 mb-4 text-center">
+              or use email for registration
+            </p>
             <input
               type="text"
               placeholder="First Name"
@@ -241,7 +289,6 @@ const LoginRegister = () => {
                 Seller
               </label>
             </div>
-
             <button
               onClick={handleSignUp}
               className="bg-red-800 hover:bg-red-700 w-[200px] py-2 text-sm mx-auto block mt-2 rounded-full text-white transition-all duration-300 hover:scale-105"
@@ -250,16 +297,22 @@ const LoginRegister = () => {
             </button>
           </div>
 
-          {/* Overlay Panel */}
+          {/* Overlay */}
           <div
-            className={`absolute top-0 bottom-0 w-1/2 flex items-center justify-center bg-red-800 text-white px-8 transition-all duration-700 z-10 ${isSignIn ? "left-1/2 rounded-tl-[100px] rounded-bl-[100px]" : "left-0 rounded-tr-[100px] rounded-br-[100px]"}`}
+            className={`absolute top-0 bottom-0 w-1/2 flex items-center justify-center bg-red-800 text-white px-8 transition-all duration-700 z-10 ${
+              isSignIn
+                ? "left-1/2 rounded-tl-[100px] rounded-bl-[100px]"
+                : "left-0 rounded-tr-[100px] rounded-br-[100px]"
+            }`}
           >
             <div className="text-center transition-all duration-500 max-w-[80%]">
               <h2 className="text-3xl font-bold mb-3">
                 {isSignIn ? "Hello, User!" : "Welcome, User!"}
               </h2>
               <p className="mb-6 text-sm">
-                {isSignIn ? "If you don’t have an account, sign up now and start your journey!" : "Already have an account? Sign in to continue."}
+                {isSignIn
+                  ? "If you don’t have an account, sign up now and start your journey!"
+                  : "Already have an account? Sign in to continue."}
               </p>
               <button
                 className="text-sm text-white hover:underline"

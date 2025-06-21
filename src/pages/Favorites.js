@@ -1,36 +1,100 @@
-import React from "react";
-import { FaHeartBroken } from "react-icons/fa";
-import { useFavorites } from "../pages/FavoritesContext";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
-const Favorites = () => {
-  const { favorites, removeFromFavorites } = useFavorites();
+const FavoritesPage = () => {
+  const [favoriteItems, setFavoriteItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // ✅ تعديل: استخدم authToken بدلًا من token
+  const token = localStorage.getItem("authToken");
+
+  const fetchFavorites = async () => {
+    try {
+      const res = await fetch("https://shopyapi.runasp.net/api/Favourite/my", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      // ✅ معالجة التوكن المنتهي أو غير الصحيح
+      if (res.status === 401 || res.status === 403) {
+        alert("Your session has expired. Please log in again.");
+        setLoading(false);
+        return;
+      }
+
+      if (!res.ok) throw new Error("Failed to fetch favorites");
+
+      const data = await res.json();
+      setFavoriteItems(data);
+    } catch (error) {
+      console.error("Fetch favorites error:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleRemoveFromFavorites = async (productId) => {
+    try {
+      const res = await fetch(
+        `https://shopyapi.runasp.net/api/Favourite/remove?productId=${productId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (res.ok) {
+        setFavoriteItems((prev) =>
+          prev.filter((item) => item.productId !== productId)
+        );
+      } else {
+        console.error("Failed to remove from favorites");
+      }
+    } catch (error) {
+      console.error("Error removing favorite:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchFavorites();
+  }, []);
 
   return (
-    <div className="bg-gray-100 min-h-[calc(100vh-80px)] py-16">
-      {favorites.length === 0 ? (
-        <div className="flex flex-col justify-center items-center min-h-[calc(100vh-80px)] text-center">
-          <FaHeartBroken className="text-red-800 text-7xl mb-6" />
-          <h2 className="text-3xl font-bold text-gray-800 mb-2">No favorites yet</h2>
-          <p className="text-gray-600 text-lg max-w-md">
-            You haven’t added anything to your favorites yet. Start exploring and mark what you love!
-          </p>
-        </div>
+    <div className="container mx-auto py-8 px-4 md:px-16 lg:px-24">
+      <h1 className="text-4xl font-bold mb-8 text-center">Your Favorites</h1>
+
+      {loading ? (
+        <p className="text-center text-gray-600 text-xl">Loading...</p>
+      ) : favoriteItems.length === 0 ? (
+        <p className="text-center text-gray-600 text-xl">
+          You haven't added any favorite products yet.
+        </p>
       ) : (
-        <div className="pt-8 px-4 grid grid-cols-1 md:grid-cols-3 gap-6">
-          {favorites.map((item) => (
-            <div key={item.id} className="bg-white rounded-lg shadow-lg p-4">
-              <img
-                src={item.image}
-                alt={item.name}
-                className="w-full h-40 object-cover rounded-md mb-4"
-              />
-              <h3 className="text-xl font-semibold text-gray-800">{item.name}</h3>
-              <p className="text-gray-600">{item.description}</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {favoriteItems.map((product) => (
+            <div
+              key={product.productId}
+              className="border p-4 rounded-lg shadow-md flex flex-col items-center text-center"
+            >
+              <Link to={`/product/${product.productId}`} className="block">
+                <img
+                  src={product.imageUrl || "/default.jpg"}
+                  alt={product.productName}
+                  className="h-48 w-full object-contain mb-4"
+                />
+                <h2 className="text-lg font-semibold mb-2 line-clamp-2">
+                  {product.productName}
+                </h2>
+              </Link>
+
               <button
-                className="mt-4 bg-red-800 text-white px-4 py-2 rounded hover:bg-red-700"
-                onClick={() => removeFromFavorites(item.id)}
+                onClick={() => handleRemoveFromFavorites(product.productId)}
+                className="mt-4 bg-red-500 text-white py-1 px-3 rounded hover:bg-red-600"
               >
-                Remove
+                Remove from Favorites
               </button>
             </div>
           ))}
@@ -40,4 +104,4 @@ const Favorites = () => {
   );
 };
 
-export default Favorites;
+export default FavoritesPage;

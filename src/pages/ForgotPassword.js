@@ -7,13 +7,37 @@ const ForgotPassword = () => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleReset = () => {
+  const handleReset = async () => {
     if (!email.trim()) {
       setError("Email is required");
-    } else {
-      setError("");
-      // Send email to reset-confirmation page
-      navigate("/reset-confirmation", { state: { email } });
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        "https://shopyapi.runasp.net/api/Auth/forget-password",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(email),
+        }
+      );
+
+      if (!response.ok) {
+        const errorData = await response.text();
+        setError(errorData || "Something went wrong");
+        return;
+      }
+
+      const data = await response.json();
+      const token = data.token;
+
+      // Navigate to confirmation page with token
+      navigate("/reset-confirmation", { state: { email, token } });
+    } catch (err) {
+      setError("Something went wrong");
     }
   };
 
@@ -23,7 +47,9 @@ const ForgotPassword = () => {
       style={{ backgroundImage: `url(${bgImage})` }}
     >
       <div className="bg-white p-10 rounded-[60px] shadow-md w-[520px] text-center">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Forgot Password</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          Forgot Password
+        </h2>
         <p className="text-gray-600 mb-6">
           Enter your email address to receive reset code.
         </p>
@@ -48,7 +74,7 @@ const ForgotPassword = () => {
 
         <Link
           to="/loginregister"
-          className="block mt-4 text-sm text-red-800 hover:"
+          className="block mt-4 text-sm text-red-800 hover:underline"
         >
           Back to Login
         </Link>

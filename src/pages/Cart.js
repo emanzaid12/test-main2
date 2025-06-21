@@ -38,16 +38,51 @@ const ShoppingCart = () => {
     fetchCart();
   }, []);
 
-  const handleApplyPromo = () => {
-    const validPromo = "SAVE20";
-    if (promoCode.trim().toUpperCase() === validPromo) {
-      setDiscount(0.2);
-      setPromoStatus("Promo code applied!");
-    } else {
+  const handleApplyPromo = async () => {
+    const trimmedCode = promoCode.trim();
+
+    // تحقق من أن الحقل غير فارغ
+    if (!trimmedCode) {
+      setPromoStatus("Please enter a promo code.");
       setDiscount(0);
-      setPromoStatus("Invalid promo code.");
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `https://shopyapi.runasp.net/api/Order/apply-promocode?promoCode=${encodeURIComponent(
+          trimmedCode
+        )}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (res.ok) {
+        const data = await res.json();
+        const discountValue = data.discountPercentage / 100;
+        setDiscount(discountValue);
+        setPromoStatus(`Promo code applied: ${data.discountPercentage}% off`);
+      } else {
+        const data = await res.json();
+        // معالجة الرسائل القادمة من السيرفر
+        const serverMessage =
+          data?.message ||
+          data?.title ||
+          (data?.errors?.promoCode && data.errors.promoCode[0]) ||
+          "Invalid promo code.";
+        setDiscount(0);
+        setPromoStatus(serverMessage);
+      }
+    } catch (err) {
+      console.error("Error applying promo code:", err);
+      setPromoStatus("Something went wrong. Please try again.");
     }
   };
+  
 
   const handleQuantityChange = async (productId, newQuantity) => {
     if (newQuantity < 1) return;

@@ -14,7 +14,9 @@ const ResetConfirmation = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const email = location.state?.email || "";
-  const [code, setCode] = useState("");
+  const token = location.state?.token || "";
+
+  const [code, setCode] = useState(token); // تلقائي
   const [error, setError] = useState("");
 
   const handleContinue = () => {
@@ -36,7 +38,8 @@ const ResetConfirmation = () => {
         <h2 className="text-2xl font-bold text-black mb-2">Check your email</h2>
 
         <p className="text-gray-600 mb-4">
-          We’ve sent an email to <span className="font-semibold">{maskEmail(email)}</span>
+          We’ve sent an email to{" "}
+          <span className="font-semibold">{maskEmail(email)}</span>
         </p>
 
         <input
@@ -58,11 +61,16 @@ const ResetConfirmation = () => {
 
         <p className="text-sm text-gray-600 mb-6">
           Didn’t receive a code?{" "}
-          <span className="text-[#800000] cursor-pointer font-medium">Resend</span>
+          <span className="text-[#800000] cursor-pointer font-medium">
+            Resend
+          </span>
         </p>
 
         <div className="flex items-center justify-center text-sm gap-2 text-[#800000] font-semibold">
-          <Link to="/login" className="hover:text-[#a00000] transition-colors">
+          <Link
+            to="/loginregister"
+            className="hover:text-[#a00000] transition-colors"
+          >
             Back to login
           </Link>
         </div>

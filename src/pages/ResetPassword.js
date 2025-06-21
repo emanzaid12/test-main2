@@ -1,9 +1,13 @@
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useLocation, useNavigate, Link } from "react-router-dom";
 import { FiLock, FiEye, FiEyeOff } from "react-icons/fi";
 import bgImage from "../assets/images/your-image.png";
 
 const NewPassword = () => {
+  const location = useLocation();
+  const email = location.state?.email || "";
+  const token = location.state?.code || "";
+
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
@@ -14,7 +18,7 @@ const NewPassword = () => {
 
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     let valid = true;
@@ -34,17 +38,39 @@ const NewPassword = () => {
     }
 
     if (valid) {
-      console.log("Password reset successful");
-      navigate("/reset-success");
+      try {
+        const response = await fetch(
+          "https://shopyapi.runasp.net/api/Auth/reset-password",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email,
+              token,
+              newPassword: password,
+            }),
+          }
+        );
+
+        if (!response.ok) {
+          const errorData = await response.text();
+          setError(errorData || "Something went wrong");
+          return;
+        }
+
+        navigate("/reset-success");
+      } catch (err) {
+        setError("Something went wrong");
+      }
     }
   };
 
   return (
     <div
       className="min-h-screen bg-cover bg-center flex items-center justify-center px-4"
-      style={{
-        backgroundImage: `url(${bgImage})`,
-      }}
+      style={{ backgroundImage: `url(${bgImage})` }}
     >
       <div className="bg-white rounded-[2.5rem] shadow-lg border border-gray-200 px-10 py-12 w-full max-w-lg text-center">
         <FiLock className="mx-auto text-[#800000] mb-4" size={40} />
@@ -54,7 +80,6 @@ const NewPassword = () => {
         </p>
 
         <form className="space-y-5 text-left" onSubmit={handleSubmit}>
-          {/* New Password Field */}
           <div className="relative">
             <input
               type={showPassword ? "text" : "password"}
@@ -72,12 +97,9 @@ const NewPassword = () => {
             <p className="text-xs text-gray-500 mt-1 ml-1">
               Must be at least 8 characters.
             </p>
-            {error && (
-              <p className="text-red-500 text-sm mt-1 ml-1">{error}</p>
-            )}
+            {error && <p className="text-red-500 text-sm mt-1 ml-1">{error}</p>}
           </div>
 
-          {/* Confirm Password Field */}
           <div className="relative">
             <input
               type={showConfirmPassword ? "text" : "password"}
@@ -90,14 +112,17 @@ const NewPassword = () => {
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
               className="absolute right-3 top-2.5 cursor-pointer text-[#800000]"
             >
-              {showConfirmPassword ? <FiEyeOff size={20} /> : <FiEye size={20} />}
+              {showConfirmPassword ? (
+                <FiEyeOff size={20} />
+              ) : (
+                <FiEye size={20} />
+              )}
             </span>
             {matchError && (
               <p className="text-red-500 text-sm mt-1 ml-1">{matchError}</p>
             )}
           </div>
 
-          {/* Reset Button */}
           <button
             type="submit"
             className="bg-[#800000] hover:bg-[#a00000] text-white font-semibold py-2 px-4 rounded-full text-sm transition-transform duration-200 hover:scale-105 mx-auto block text-center w-fit"

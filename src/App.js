@@ -29,6 +29,7 @@ import ForgotPassword from "./pages/ForgotPassword"
 import ResetConfirmation from "./pages/ResetConfirmation";
 import ResetPassword from "./pages/ResetPassword";
 import ResetSuccess from "./pages/PasswordResetSuccess";
+import OrderTracking from "./pages/OrderTracking";
 
 function App() {
   const { i18n } = useTranslation();
@@ -42,38 +43,46 @@ function App() {
   const [order, setOrder] = useState(null);
 
   return (
-    <Provider store={store}> 
+    <Provider store={store}>
       <FavoritesProvider>
-       
-          <div className="flex flex-col min-h-screen">
-            <Navbar />
-            <div className="flex-grow">
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/shop" element={<Shop />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/cart" element={<Cart />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/services" element={<Services />} />
-                <Route path="/payment" element={<Payment />} />
-                <Route path="/review-order" element={<ReviewOrder />} />
-                <Route path="/filter-data" element={<FilterData />} />
-                <Route path="/product/:id" element={<ProductDetail />} />
-                <Route path="/favorites" element={<Favorites />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="/shipping" element={<Shipping />} />
-                <Route path="/order-confirmation" element={<OrderConfirmation />} />
-                <Route path="/loginregister" element={<LoginRegister />} />
-                <Route path="/forgot-password" element={<ForgotPassword />} />
-                <Route path="/reset-confirmation" element={<ResetConfirmation/>} />
-                <Route path="/reset-password" element={<ResetPassword/>} />
-                <Route path="/reset-success" element={<ResetSuccess/>} />
-                
-              </Routes>
-            </div>
-            <Footer />
+        <div className="flex flex-col min-h-screen">
+          <Navbar />
+          <div className="flex-grow">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/shop" element={<Shop />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/cart" element={<Cart />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/services" element={<Services />} />
+              <Route path="/payment" element={<Payment />} />
+              <Route path="/review-order" element={<ReviewOrder />} />
+              <Route path="/filter-data" element={<FilterData />} />
+              <Route path="/product/:id" element={<ProductDetail />} />
+              <Route path="/favorites" element={<Favorites />} />
+              <Route path="/settings" element={<Settings />} />
+              <Route path="/shipping" element={<Shipping />} />
+              <Route
+                path="/order-confirmation"
+                element={<OrderConfirmation />}
+              />
+              <Route path="/loginregister" element={<LoginRegister />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route
+                path="/reset-confirmation"
+                element={<ResetConfirmation />}
+              />
+              <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/reset-success" element={<ResetSuccess />} />
+              <Route path="/order-tracking" element={<OrderTracking />} />
+              <Route
+                path="/order-tracking/:orderId"
+                element={<OrderTracking />}
+              />
+            </Routes>
           </div>
-       
+          <Footer />
+        </div>
       </FavoritesProvider>
       <ToastContainer />
     </Provider>

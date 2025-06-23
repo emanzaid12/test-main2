@@ -30,7 +30,32 @@ import ResetConfirmation from "./pages/ResetConfirmation";
 import ResetPassword from "./pages/ResetPassword";
 import ResetSuccess from "./pages/PasswordResetSuccess";
 import OrderTracking from "./pages/OrderTracking";
+import Dashboard from "./pages/Seller/Dashboard";
+import DashboardAdmin from "./pages/Admin/AdminDashboard";
 
+import AddNewBrand from "./pages/Seller/AddNewBrand";
+import AddYourProducts from "./pages/Seller/AddYourProducts";
+import MyProducts from "./pages/Seller/MyProducts";
+import OrderReceived from "./pages/Seller/OrderReceived";
+import SellerMessages from "./pages/Seller/SellerMessages";
+import Reviews from "./pages/Seller/Reviews";
+import BrandSettings from "./pages/Seller/BrandSettings";
+import CouponPage from "./pages/Seller/CouponPage";
+
+import AccountSettingsPage from "./pages/Seller/AccountSettingsPage";
+import LanguageSettingsPage from "./pages/Seller/LanguageSettingsPage";
+import FAQPage from "./pages/Seller/FAQPage";
+import PrivacyPolicyPage from "./pages/Seller/PrivacyPolicyPage";
+import HelpPage from "./pages/Seller/HelpPage";
+import TermsPage from "./pages/Seller/TermsPage";
+import ManageProducts from "./pages/Admin/ManageProducts";
+//import ManageOrders from "./pages/Admin/ManageOrders";
+import ManageReviews from "./pages/Admin/ManageReviews";
+import ManageSellers from "./pages/Admin/ManageSellers";
+//import SellersReports from "./pages/Admin/SellersReports";
+import Notifications from "./pages/Seller/Notifications";
+import UpdateProduct from "./pages/Seller/UpdateProduct";
+//import AdminMessages from "./pages/Admin/AdminMessages";
 function App() {
   const { i18n } = useTranslation();
 
@@ -79,6 +104,49 @@ function App() {
                 path="/order-tracking/:orderId"
                 element={<OrderTracking />}
               />
+              <Route path="/admin-dashboard" element={<DashboardAdmin />} />
+              <Route path="/dashboard-seller" element={<Dashboard />} />
+              <Route path="/add-new-brand" element={<AddNewBrand />} />
+              <Route
+                path="/dashboard/add-products"
+                element={<AddYourProducts />}
+              />
+              <Route path="/dashboard/my-products" element={<MyProducts />} />
+              <Route path="/dashboard/orders" element={<OrderReceived />} />
+              <Route path="/dashboard/messages" element={<SellerMessages />} />
+              <Route path="/dashboard/reviews" element={<Reviews />} />
+              <Route
+                path="/dashboard/brand-settings"
+                element={<BrandSettings />}
+              />
+              <Route path="/dashboard/coupon-page" element={<CouponPage />} />
+              <Route
+                path="/dashboard/account-settings-page"
+                element={<AccountSettingsPage />}
+              />
+              <Route
+                path="/dashboard/language-settings-page"
+                element={<LanguageSettingsPage />}
+              />
+              <Route path="/dashboard/faq-page" element={<FAQPage />} />
+              <Route
+                path="/dashboard/privacy-policy-page"
+                element={<PrivacyPolicyPage />}
+              />
+              <Route path="/dashboard/help-page" element={<HelpPage />} />
+              <Route path="/dashboard/terms-page" element={<TermsPage />} />
+              <Route
+                path="/dashboard/notifications"
+                element={<Notifications />}
+              />
+
+              <Route path="/dashboard" element={<Dashboard />} />
+
+              <Route path="/admin/products" element={<ManageProducts />} />
+              {/* <Route path="/admin/orders" element={<ManageOrders />} /> */}
+              <Route path="/admin/reviews" element={<ManageReviews />} />
+              <Route path="/admin/sellers" element={<ManageSellers />} />
+              <Route path="/update-product/:id" element={<UpdateProduct />} />
             </Routes>
           </div>
           <Footer />

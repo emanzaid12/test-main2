@@ -3,7 +3,7 @@ import {
   FaPlus, FaBoxOpen, FaClipboardCheck, FaEnvelope, FaBullhorn,
   FaStar, FaCogs, FaUserCog, FaGlobe, FaQuestionCircle,
   FaLock, FaFileContract, FaLifeRing, FaSignOutAlt,
-  FaDollarSign, FaShoppingBag, FaClock, FaUsers
+  FaDollarSign, FaShoppingBag, FaClock, FaUsers,FaBell
 } from "react-icons/fa";
 import CountUp from "react-countup";
 import {
@@ -21,7 +21,7 @@ import { motion } from "framer-motion";
 import AddYourProducts from './AddYourProducts';
 import MyProducts from './MyProducts';
 import OrderReceived from './OrderReceived';
-import Messages from './Messages';
+import Messages from './SellerMessages';
 import Reviews from './Reviews';
 import BrandSettings from './BrandSettings';
 
@@ -41,6 +41,8 @@ const sidebarItems = [
   { to: "/dashboard/privacy-policy-page", icon: <FaLock />, label: "Privacy Policy", sub: "Understand your data rights" },
   { to: "/dashboard/terms-page", icon: <FaFileContract />, label: "Terms & Conditions", sub: "Review our terms of service" },
   { to: "/dashboard/help-page", icon: <FaLifeRing />, label: "Help Center", sub: "Need support? We're here!" },
+  { to: "/dashboard/notifications", icon: <FaBell />, label: "Notifications", sub: "Alerts and updates from your store" },
+  
 ];
 
 const stats = [

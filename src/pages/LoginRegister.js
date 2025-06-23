@@ -76,14 +76,12 @@ const LoginRegister = () => {
       const jsonPayload = decodeURIComponent(
         atob(base64)
           .split("")
-          .map(function (c) {
-            return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-          })
+          .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
           .join("")
       );
-
       return JSON.parse(jsonPayload);
     } catch (e) {
+      console.error("Error parsing JWT:", e);
       return null;
     }
   };
@@ -106,20 +104,68 @@ const LoginRegister = () => {
 
       if (response.ok) {
         localStorage.setItem("authToken", data.token);
-        alert("Login successful!");
 
         const decoded = parseJwt(data.token);
-        const role = decoded?.role || decoded?.Role;
 
-        if (role === "seller" || role === "admin") {
-          navigate("/dashboard");
+        // طباعة محتوى التوكن للتأكد من البيانات
+        console.log("Full decoded token:", decoded);
+
+        // البحث عن الـ role في جميع الخصائص الممكنة
+        const role =
+          decoded?.role ||
+          decoded?.Role ||
+          decoded?.[
+            "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+          ] ||
+          decoded?.[
+            "https://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+          ] ||
+          decoded?.["role"];
+
+        console.log("Extracted role:", role, "Type:", typeof role);
+
+        // تحويل الـ role إلى string للمقارنة
+        let normalizedRole = "";
+        if (typeof role === "number") {
+          normalizedRole = role.toString();
+        } else if (typeof role === "string") {
+          normalizedRole = role.toLowerCase().trim();
+        }
+
+        console.log("Normalized role:", normalizedRole);
+
+        // منطق التوجيه المحسن
+        if (normalizedRole === "1" || normalizedRole === "seller") {
+          console.log("Seller detected - navigating to seller dashboard");
+          alert("Welcome Seller! Redirecting to your dashboard...");
+          navigate("/dashboard-seller");
+        } else if (normalizedRole === "2" || normalizedRole === "admin") {
+          console.log("Admin detected - navigating to admin dashboard");
+          alert("Welcome Admin! Redirecting to admin dashboard...");
+          navigate("/admin-dashboard");
+        } else if (
+          normalizedRole === "0" ||
+          normalizedRole === "user" ||
+          normalizedRole === ""
+        ) {
+          console.log("User detected - navigating to home");
+          alert("Welcome User! Redirecting to home...");
+          navigate("/");
         } else {
+          // في حالة عدم التعرف على الـ role
+          console.log(
+            "Unknown role detected:",
+            normalizedRole,
+            "- defaulting to home"
+          );
+          alert("Login successful! Redirecting to home...");
           navigate("/");
         }
       } else {
         alert(`Login failed: ${data?.message || "Invalid email or password."}`);
       }
     } catch (error) {
+      console.error("Login error:", error);
       alert("An error occurred while connecting to the API. Please try again.");
     }
   };
@@ -311,7 +357,7 @@ const LoginRegister = () => {
               </h2>
               <p className="mb-6 text-sm">
                 {isSignIn
-                  ? "If you don’t have an account, sign up now and start your journey!"
+                  ? "If you don't have an account, sign up now and start your journey!"
                   : "Already have an account? Sign in to continue."}
               </p>
               <button

@@ -1,4 +1,10 @@
-import { FaStar, FaRegStar, FaEnvelope, FaCommentDots, FaHeart } from "react-icons/fa"; 
+import {
+  FaStar,
+  FaRegStar,
+  FaEnvelope,
+  FaCommentDots,
+  FaHeart,
+} from "react-icons/fa";
 import { useEffect, useState } from "react";
 
 const reviewsData = [
@@ -44,11 +50,12 @@ const Reviews = () => {
       setCount(start);
     }, 16);
   }, []);
-  
 
   return (
     <div className="p-6 bg-white min-h-screen">
-      <h1 className="text-2xl font-bold  text-center text-[#800000] mb-6">Reviews</h1>
+      <h1 className="text-2xl font-bold  text-center text-[#800000] mb-6">
+        Reviews
+      </h1>
 
       {/* Stats Section */}
       <div className="grid grid-cols-3 gap-6 mb-12">
@@ -58,7 +65,9 @@ const Reviews = () => {
           <p className="text-3xl font-bold text-[#800000]">
             {(count / 1000).toFixed(1)}k
           </p>
-          <p className="text-sm text-gray-400 mt-1">Growth in reviews on this year</p>
+          <p className="text-sm text-gray-400 mt-1">
+            Growth in reviews on this year
+          </p>
         </div>
 
         {/* Average Rating */}
@@ -77,14 +86,16 @@ const Reviews = () => {
               <FaRegStar />
             </div>
           </div>
-          <p className="text-sm text-gray-400 mt-1">Average rating on this year</p>
+          <p className="text-sm text-gray-400 mt-1">
+            Average rating on this year
+          </p>
         </div>
 
         {/* Bar Chart */}
         <div className="bg-gray-50 pt-6 p-4 rounded-lg shadow-sm text-center">
           <p className="text-sm text-gray-500 mb-2">March 2024 - April 2025</p>
           <div className="space-y-3 text-sm text-gray-600 w-full px-4">
-            {[ 
+            {[
               { label: "5★", width: "70%", value: "7.0k", color: "#a73439" },
               { label: "4★", width: "15%", value: "1.5k", color: "#c7686b" },
               { label: "3★", width: "7%", value: "500", color: "#e9a1a3" },
@@ -104,7 +115,9 @@ const Reviews = () => {
                     }}
                   ></div>
                 </div>
-                <span className="text-xs text-gray-700 w-10 text-left">{bar.value}</span>
+                <span className="text-xs text-gray-700 w-10 text-left">
+                  {bar.value}
+                </span>
               </div>
             ))}
           </div>
@@ -140,7 +153,9 @@ const Reviews = () => {
                   <FaRegStar key={i} />
                 ))}
               </div>
-              <p className="text-gray-700 mb-3 whitespace-pre-line">{review.message}</p>
+              <p className="text-gray-700 mb-3 whitespace-pre-line">
+                {review.message}
+              </p>
               {/* <div className="flex gap-3 items-center">
   <button className="flex items-center gap-2 bg-[#800000] text-white text-sm px-4 py-2 rounded-full hover:scale-105 hover:bg-[#a03c3c] transition-all">
     <FaCommentDots />
@@ -154,7 +169,6 @@ const Reviews = () => {
     <FaHeart />
   </div>
 </div> */}
-
             </div>
           </div>
         ))}

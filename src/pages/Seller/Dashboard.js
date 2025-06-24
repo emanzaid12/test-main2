@@ -28,21 +28,90 @@ import BrandSettings from './BrandSettings';
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, ChartTooltip);
 
 const sidebarItems = [
-  { to: "/dashboard/add-products", icon: <FaPlus />, label: "Add Your Products", sub: "Add items to your store" },
-  { to: "/dashboard/my-products", icon: <FaBoxOpen />, label: "My Products", sub: "Manage your uploaded items" },
-  { to: "/dashboard/orders", icon: <FaClipboardCheck />, label: "Order Received", sub: "View your received orders" },
-  { to: "/dashboard/messages", icon: <FaEnvelope />, label: "Messages", sub: "Chat with your customers" },
-  { to: "/dashboard/coupon-page", icon: <FaBullhorn />, label: "Coupon Page", sub: "Boost your product visibility" },
-  { to: "/dashboard/reviews", icon: <FaStar />, label: "Reviews", sub: "Read customer feedback" },
-  { to: "/dashboard/brand-settings", icon: <FaCogs />, label: "Brand Settings", sub: "Configure your store" },
-  { to: "/dashboard/account-settings-page", icon: <FaUserCog />, label: "Account Information", sub: "Manage your profile" },
-  { to: "/dashboard/language-settings-page", icon: <FaGlobe />, label: "Language & Appearance", sub: "Change language and theme" },
-  { to: "/dashboard/faq-page", icon: <FaQuestionCircle />, label: "FAQ", sub: "Frequently asked questions" },
-  { to: "/dashboard/privacy-policy-page", icon: <FaLock />, label: "Privacy Policy", sub: "Understand your data rights" },
-  { to: "/dashboard/terms-page", icon: <FaFileContract />, label: "Terms & Conditions", sub: "Review our terms of service" },
-  { to: "/dashboard/help-page", icon: <FaLifeRing />, label: "Help Center", sub: "Need support? We're here!" },
-  { to: "/dashboard/notifications", icon: <FaBell />, label: "Notifications", sub: "Alerts and updates from your store" },
-  
+  {
+    to: "/dashboard/add-products",
+    icon: <FaPlus />,
+    label: "Add Your Products",
+    sub: "Add items to your store",
+  },
+  {
+    to: "/dashboard/my-products",
+    icon: <FaBoxOpen />,
+    label: "My Products",
+    sub: "Manage your uploaded items",
+  },
+  {
+    to: "/dashboard/orders",
+    icon: <FaClipboardCheck />,
+    label: "Order Received",
+    sub: "View your received orders",
+  },
+  {
+    to: "/dashboard/messages",
+    icon: <FaEnvelope />,
+    label: "Messages",
+    sub: "Chat with your customers",
+  },
+  {
+    to: "/dashboard/coupon-page",
+    icon: <FaBullhorn />,
+    label: "Buyers Page",
+    sub: "Boost your product visibility",
+  },
+  {
+    to: "/dashboard/reviews",
+    icon: <FaStar />,
+    label: "Reviews",
+    sub: "Read customer feedback",
+  },
+  {
+    to: "/dashboard/brand-settings",
+    icon: <FaCogs />,
+    label: "Brand Settings",
+    sub: "Configure your store",
+  },
+  {
+    to: "/dashboard/account-settings-page",
+    icon: <FaUserCog />,
+    label: "Account Information",
+    sub: "Manage your profile",
+  },
+  {
+    to: "/dashboard/language-settings-page",
+    icon: <FaGlobe />,
+    label: "Language & Appearance",
+    sub: "Change language and theme",
+  },
+  {
+    to: "/dashboard/faq-page",
+    icon: <FaQuestionCircle />,
+    label: "FAQ",
+    sub: "Frequently asked questions",
+  },
+  {
+    to: "/dashboard/privacy-policy-page",
+    icon: <FaLock />,
+    label: "Privacy Policy",
+    sub: "Understand your data rights",
+  },
+  {
+    to: "/dashboard/terms-page",
+    icon: <FaFileContract />,
+    label: "Terms & Conditions",
+    sub: "Review our terms of service",
+  },
+  {
+    to: "/dashboard/help-page",
+    icon: <FaLifeRing />,
+    label: "Help Center",
+    sub: "Need support? We're here!",
+  },
+  {
+    to: "/dashboard/notifications",
+    icon: <FaBell />,
+    label: "Notifications",
+    sub: "Alerts and updates from your store",
+  },
 ];
 
 const stats = [

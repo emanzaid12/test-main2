@@ -33,6 +33,111 @@ const LoginRegister = () => {
   const inputFieldStyle =
     "w-full mb-3 px-4 py-2 rounded-md bg-gray-100 focus:outline-none focus:ring-2 focus:ring-red-800";
 
+  const parseJwt = (token) => {
+    try {
+      const base64Url = token.split(".")[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split("")
+          .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+          .join("")
+      );
+      return JSON.parse(jsonPayload);
+    } catch (e) {
+      console.error("Error parsing JWT:", e);
+      return null;
+    }
+  };
+
+  const handleUserRedirection = (token) => {
+    const decoded = parseJwt(token);
+    console.log("Full decoded token:", decoded);
+
+    // البحث عن الـ role في جميع الخصائص الممكنة
+    const role =
+      decoded?.role ||
+      decoded?.Role ||
+      decoded?.[
+        "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+      ] ||
+      decoded?.[
+        "https://schemas.microsoft.com/ws/2008/06/identity/claims/role"
+      ] ||
+      decoded?.["role"];
+
+    // البحث عن الـ status في جميع الخصائص الممكنة
+    const status =
+      decoded?.status ||
+      decoded?.Status ||
+      decoded?.accountStatus ||
+      decoded?.AccountStatus ||
+      decoded?.[
+        "http://schemas.microsoft.com/ws/2008/06/identity/claims/status"
+      ] ||
+      decoded?.[
+        "https://schemas.microsoft.com/ws/2008/06/identity/claims/status"
+      ];
+
+    console.log("Extracted role:", role, "Type:", typeof role);
+    console.log("Extracted status:", status, "Type:", typeof status);
+
+    // تحويل الـ role إلى string للمقارنة
+    let normalizedRole = "";
+    if (typeof role === "number") {
+      normalizedRole = role.toString();
+    } else if (typeof role === "string") {
+      normalizedRole = role.toLowerCase().trim();
+    }
+
+    // تحويل الـ status إلى string للمقارنة
+    let normalizedStatus = "";
+    if (typeof status === "string") {
+      normalizedStatus = status.toLowerCase().trim();
+    }
+
+    console.log("Normalized role:", normalizedRole);
+    console.log("Normalized status:", normalizedStatus);
+
+    // التحقق من الحالة أولاً - إذا كانت pending يذهب إلى dashboard seller
+    if (normalizedRole === "3" || normalizedRole === "pending") {
+      console.log("Pending status detected - navigating to seller dashboard");
+      alert(
+        "Your account is pending approval. Redirecting to seller dashboard..."
+      );
+      navigate("/dashboard-seller");
+      return;
+    }
+
+    // منطق التوجيه العادي حسب الـ role
+    if (normalizedRole === "1" || normalizedRole === "seller") {
+      console.log("Seller detected - navigating to seller dashboard");
+      alert("Welcome Seller! Redirecting to your dashboard...");
+      navigate("/dashboard-seller");
+    } else if (normalizedRole === "2" || normalizedRole === "admin") {
+      console.log("Admin detected - navigating to admin dashboard");
+      alert("Welcome Admin! Redirecting to admin dashboard...");
+      navigate("/admin-dashboard");
+    } else if (
+      normalizedRole === "0" ||
+      normalizedRole === "user" ||
+      normalizedRole === ""
+    ) {
+      console.log("User detected - navigating to home");
+      alert("Welcome User! Redirecting to home...");
+      navigate("/");
+    } else {
+      // في حالة عدم التعرف على الـ role
+      console.log(
+        "Unknown role detected:",
+        normalizedRole,
+        "- defaulting to home"
+      );
+      alert("Login successful! Redirecting to home...");
+      navigate("/");
+    }
+  };
+
   const handleSignUp = async () => {
     if (signUpPassword !== signUpConfirmPassword) {
       alert("Passwords do not match");
@@ -59,30 +164,22 @@ const LoginRegister = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert("Registration successful!");
-        navigate("/verify-notice");
+        // إذا كان التسجيل ناجح وكان هناك token في الاستجابة
+        if (data.token) {
+          localStorage.setItem("authToken", data.token);
+          console.log("Registration successful with token - checking status");
+          handleUserRedirection(data.token);
+        } else {
+          // إذا لم يكن هناك token (قد يحتاج تفعيل)
+          alert("Registration successful!");
+          navigate("/verify-notice");
+        }
       } else {
         alert(`Registration failed: ${data?.message || "An error occurred."}`);
       }
     } catch (error) {
+      console.error("Registration error:", error);
       alert("An error occurred while connecting to the API. Please try again.");
-    }
-  };
-
-  const parseJwt = (token) => {
-    try {
-      const base64Url = token.split(".")[1];
-      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-      const jsonPayload = decodeURIComponent(
-        atob(base64)
-          .split("")
-          .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-          .join("")
-      );
-      return JSON.parse(jsonPayload);
-    } catch (e) {
-      console.error("Error parsing JWT:", e);
-      return null;
     }
   };
 
@@ -104,63 +201,8 @@ const LoginRegister = () => {
 
       if (response.ok) {
         localStorage.setItem("authToken", data.token);
-
-        const decoded = parseJwt(data.token);
-
-        // طباعة محتوى التوكن للتأكد من البيانات
-        console.log("Full decoded token:", decoded);
-
-        // البحث عن الـ role في جميع الخصائص الممكنة
-        const role =
-          decoded?.role ||
-          decoded?.Role ||
-          decoded?.[
-            "http://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-          ] ||
-          decoded?.[
-            "https://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-          ] ||
-          decoded?.["role"];
-
-        console.log("Extracted role:", role, "Type:", typeof role);
-
-        // تحويل الـ role إلى string للمقارنة
-        let normalizedRole = "";
-        if (typeof role === "number") {
-          normalizedRole = role.toString();
-        } else if (typeof role === "string") {
-          normalizedRole = role.toLowerCase().trim();
-        }
-
-        console.log("Normalized role:", normalizedRole);
-
-        // منطق التوجيه المحسن
-        if (normalizedRole === "1" || normalizedRole === "seller") {
-          console.log("Seller detected - navigating to seller dashboard");
-          alert("Welcome Seller! Redirecting to your dashboard...");
-          navigate("/dashboard-seller");
-        } else if (normalizedRole === "2" || normalizedRole === "admin") {
-          console.log("Admin detected - navigating to admin dashboard");
-          alert("Welcome Admin! Redirecting to admin dashboard...");
-          navigate("/admin-dashboard");
-        } else if (
-          normalizedRole === "0" ||
-          normalizedRole === "user" ||
-          normalizedRole === ""
-        ) {
-          console.log("User detected - navigating to home");
-          alert("Welcome User! Redirecting to home...");
-          navigate("/");
-        } else {
-          // في حالة عدم التعرف على الـ role
-          console.log(
-            "Unknown role detected:",
-            normalizedRole,
-            "- defaulting to home"
-          );
-          alert("Login successful! Redirecting to home...");
-          navigate("/");
-        }
+        console.log("Login successful - checking user status and role");
+        handleUserRedirection(data.token);
       } else {
         alert(`Login failed: ${data?.message || "Invalid email or password."}`);
       }

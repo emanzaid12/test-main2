@@ -36,7 +36,7 @@ const BuyersPage = () => {
       );
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error();
       }
 
       const data = await response.json();

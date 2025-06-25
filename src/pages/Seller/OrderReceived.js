@@ -43,7 +43,7 @@ const OrderReceived = () => {
         if (response.status === 401)
           throw new Error("Unauthorized - Please login again");
         if (response.status === 404) throw new Error("Store not found");
-        throw new Error(`Error: ${response.status}`);
+        throw new Error();
       }
 
       const data = await response.json();

@@ -209,16 +209,16 @@ const ContactUs = () => {
             </video>
           </div>
 
-          <div className="mt-6 space-y-2">
+          {/* <div className="mt-6 space-y-2">
             <p className="text-gray-800 flex items-center justify-center gap-2">
               <FaPhoneAlt className="text-red-700" /> +1 (203) 302-9545
             </p>
             <p className="text-gray-800 flex items-center justify-center gap-2">
               <FaEnvelope className="text-red-700" /> contactus@gmail.com
             </p>
-          </div>
+          </div> */}
 
-          <div className="flex justify-center space-x-4 mt-4">
+          {/* <div className="flex justify-center space-x-4 mt-4">
             {[FaFacebookF, FaTwitter, FaInstagram].map((Icon, index) => (
               <div
                 key={index}
@@ -227,7 +227,7 @@ const ContactUs = () => {
                 <Icon className="text-white text-2xl" />
               </div>
             ))}
-          </div>
+          </div> */}
         </div>
       </div>
 

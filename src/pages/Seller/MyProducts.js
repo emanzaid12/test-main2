@@ -28,11 +28,11 @@ const MyProducts = () => {
         const result = data.products || data;
         setProducts(result);
       } else {
-        alert(data.message || "Failed to fetch products");
+       // alert(data.message || "Failed to fetch products");
       }
     } catch (err) {
       console.error(err);
-      alert("An error occurred while fetching products.");
+      //alert("An error occurred while fetching products.");
     }
     setLoading(false);
   };
@@ -51,11 +51,11 @@ const MyProducts = () => {
         setSelectedProduct(data);
         setShowDetails(true);
       } else {
-        alert(data.message || "Failed to fetch product details");
+        //alert(data.message || "Failed to fetch product details");
       }
     } catch (err) {
       console.error(err);
-      alert("An error occurred while fetching product details.");
+     // alert("An error occurred while fetching product details.");
     }
     setDetailsLoading(false);
   };
@@ -79,7 +79,7 @@ const MyProducts = () => {
         alert(data.message);
         fetchProducts(); // Refresh
       } else {
-        alert(data.message || "Failed to delete product");
+        //alert(data.message || "Failed to delete product");
       }
     } catch (err) {
       console.error(err);

@@ -6,6 +6,7 @@ import {
   FaHeart,
   FaHandsHelping,
   FaTachometerAlt,
+  FaPlus,
 } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useLocation } from "react-router-dom";
@@ -65,6 +66,8 @@ const Navbar = () => {
         return "seller";
       } else if (normalizedRole === "2" || normalizedRole === "admin") {
         return "admin";
+      } else if (normalizedRole === "3" || normalizedRole === "pending") {
+        return "pending";
       } else {
         return "user";
       }
@@ -96,6 +99,13 @@ const Navbar = () => {
 
   const currentPath = location.pathname;
 
+  // تحديد ما إذا كان يجب إظهار شريط البحث
+  const shouldShowSearch = () => {
+    if (!loggedIn) return currentPath === "/" || currentPath === "/shop";
+    if (userRole === "pending") return false;
+    return currentPath === "/" || currentPath === "/shop";
+  };
+
   return (
     <nav className="bg-red-800 text-white shadow-md">
       {/* Top Section */}
@@ -108,8 +118,8 @@ const Navbar = () => {
           </Link>
         </div>
 
-        {/* Search - يظهر فقط في Home و Shop */}
-        {(currentPath === "/" || currentPath === "/shop") && (
+        {/* Search - يظهر حسب الشروط الجديدة */}
+        {shouldShowSearch() && (
           <div className="relative flex-1 mx-4">
             <form onSubmit={handleSearch}>
               <input
@@ -124,9 +134,9 @@ const Navbar = () => {
           </div>
         )}
 
-        {/* Icons + Login/Register */}
+        {/* Icons + Login/Register/Logout */}
         <div className="flex items-center space-x-4">
-          {/* Cart - Only show for regular users */}
+          {/* Cart - Only show for regular users (not pending, not seller, not admin) */}
           {(!loggedIn || userRole === "user") && (
             <Link to="/cart" className="relative">
               <FaShoppingCart className="text-lg" />
@@ -138,10 +148,21 @@ const Navbar = () => {
             </Link>
           )}
 
-          {/* Favorite - Only show for regular users */}
+          {/* Favorite - Only show for regular users (not pending, not seller, not admin) */}
           {(!loggedIn || userRole === "user") && (
             <Link to="/favorites">
               <FaHeart className="text-lg" />
+            </Link>
+          )}
+
+          {/* Add New Brand - Only show for pending users */}
+          {loggedIn && userRole === "pending" && (
+            <Link
+              to="/add-new-brand"
+              className="flex items-center gap-1 bg-white text-red-800 px-3 py-1 rounded-full text-sm font-bold hover:bg-gray-100 transition-colors"
+            >
+              <FaPlus className="text-sm" />
+              Add Brand
             </Link>
           )}
 
@@ -154,11 +175,15 @@ const Navbar = () => {
             <Link to="/admin-dashboard">
               <FaTachometerAlt className="text-lg" />
             </Link>
-          ) : (
+          ) : loggedIn && userRole === "pending" ? (
+            <Link to="/dashboard-seller">
+              <FaTachometerAlt className="text-lg" />
+            </Link>
+          ) : loggedIn && userRole === "user" ? (
             <Link to="/settings">
               <FaUser className="text-lg" />
             </Link>
-          )}
+          ) : null}
 
           {/* Login/Register or Logout */}
           {!loggedIn ? (

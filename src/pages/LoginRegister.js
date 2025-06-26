@@ -78,9 +78,24 @@ const LoginRegister = () => {
       decoded?.[
         "https://schemas.microsoft.com/ws/2008/06/identity/claims/status"
       ];
+      const hasRequest =
+        decoded?.hasRequest ||
+        decoded?.HasRequest ||
+        decoded?.[
+          "http://schemas.microsoft.com/ws/2008/06/identity/claims/hasRequest"
+        ] ||
+        decoded?.[
+          "https://schemas.microsoft.com/ws/2008/06/identity/claims/hasRequest"
+        ];
 
     console.log("Extracted role:", role, "Type:", typeof role);
     console.log("Extracted status:", status, "Type:", typeof status);
+    console.log(
+      "Extracted hasRequest:",
+      hasRequest,
+      "Type:",
+      typeof hasRequest
+    );
 
     // تحويل الـ role إلى string للمقارنة
     let normalizedRole = "";
@@ -95,11 +110,28 @@ const LoginRegister = () => {
     if (typeof status === "string") {
       normalizedStatus = status.toLowerCase().trim();
     }
+    let hasRequestBoolean = false;
+    if (typeof hasRequest === "string") {
+      hasRequestBoolean = hasRequest.toLowerCase() === "true";
+    } else if (typeof hasRequest === "boolean") {
+      hasRequestBoolean = hasRequest;
+    }
 
     console.log("Normalized role:", normalizedRole);
     console.log("Normalized status:", normalizedStatus);
+    console.log("Has request boolean:", hasRequestBoolean);
 
     // التحقق من الحالة أولاً - إذا كانت pending يذهب إلى dashboard seller
+    if (
+      hasRequestBoolean &&
+      (normalizedRole === "3" || normalizedRole === "pending")
+    ) {
+      console.log("Seller with pending request detected - navigating to home");
+      alert("You have a pending store request. Please wait for approval.");
+      navigate("/");
+      return;
+    }
+
     if (normalizedRole === "3" || normalizedRole === "pending") {
       console.log("Pending status detected - navigating to seller dashboard");
       alert(
@@ -108,7 +140,7 @@ const LoginRegister = () => {
       navigate("/dashboard-seller");
       return;
     }
-
+    
     // منطق التوجيه العادي حسب الـ role
     if (normalizedRole === "1" || normalizedRole === "seller") {
       console.log("Seller detected - navigating to seller dashboard");

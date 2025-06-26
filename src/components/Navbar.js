@@ -77,12 +77,30 @@ const Navbar = () => {
     }
   };
 
+  // دالة جديدة للتحقق من وجود طلب إنشاء متجر
+  const getUserHasRequest = () => {
+    try {
+      const token = localStorage.getItem("authToken");
+      if (!token) return false;
+
+      const decoded = parseJwt(token);
+      if (!decoded) return false;
+
+      const hasRequest = decoded?.hasRequest;
+      return hasRequest === true || hasRequest === "true";
+    } catch (error) {
+      console.error("Error getting hasRequest:", error);
+      return false;
+    }
+  };
+
   const isLoggedIn = () => {
     const token = localStorage.getItem("authToken");
     return token && token !== "";
   };
 
   const userRole = getUserRole();
+  const hasRequest = getUserHasRequest();
   const loggedIn = isLoggedIn();
 
   const handleSearch = (e) => {
@@ -101,9 +119,55 @@ const Navbar = () => {
 
   // تحديد ما إذا كان يجب إظهار شريط البحث
   const shouldShowSearch = () => {
-    if (!loggedIn) return currentPath === "/" || currentPath === "/shop";
-    if (userRole === "pending") return false;
-    return currentPath === "/" || currentPath === "/shop";
+    const isMainPage = currentPath === "/" || currentPath === "/shop";
+
+    // إذا لم يكن في الصفحة الرئيسية أو صفحة المتجر، لا يظهر البحث
+    if (!isMainPage) return false;
+
+    // إذا لم يكن مسجل دخول، يظهر البحث
+    if (!loggedIn) return true;
+
+    // إذا كان pending مع طلب، لا يظهر البحث
+    if (userRole === "pending" && hasRequest) return false;
+
+    // إذا كان pending بدون طلب، يظهر البحث
+    if (userRole === "pending" && !hasRequest) return true;
+
+    // للمستخدمين العاديين يظهر البحث
+    if (userRole === "user") return true;
+
+    // للـ seller والـ admin لا يظهر البحث
+    return false;
+  };
+
+  // تحديد ما إذا كان يجب إظهار Cart و Favorites
+  const shouldShowUserFeatures = () => {
+    // إذا لم يكن مسجل دخول، يظهر للزوار
+    if (!loggedIn) return true;
+
+    // إذا كان pending مع طلب، لا يظهر
+    if (userRole === "pending" && hasRequest) return false;
+
+    // إذا كان pending بدون طلب، يظهر
+    if (userRole === "pending" && !hasRequest) return true;
+
+    // للمستخدمين العاديين فقط يظهر
+    if (userRole === "user") return true;
+
+    // للـ seller والـ admin لا يظهر
+    return false;
+  };
+
+  // تحديد الصفحات المتاحة حسب نوع المستخدم
+  const getAvailablePages = () => {
+    let pages = ["Home", "Shop", "Contact", "About", "Services"];
+
+    // إخفاء Contact للـ seller أو pending
+    if (loggedIn && (userRole === "seller" || userRole === "pending")) {
+      pages = pages.filter((page) => page !== "Contact");
+    }
+
+    return pages;
   };
 
   return (
@@ -136,8 +200,8 @@ const Navbar = () => {
 
         {/* Icons + Login/Register/Logout */}
         <div className="flex items-center space-x-4">
-          {/* Cart - Only show for regular users (not pending, not seller, not admin) */}
-          {(!loggedIn || userRole === "user") && (
+          {/* Cart - Only show for users without pending requests */}
+          {shouldShowUserFeatures() && (
             <Link to="/cart" className="relative">
               <FaShoppingCart className="text-lg" />
               {products.length > 0 && (
@@ -148,15 +212,15 @@ const Navbar = () => {
             </Link>
           )}
 
-          {/* Favorite - Only show for regular users (not pending, not seller, not admin) */}
-          {(!loggedIn || userRole === "user") && (
+          {/* Favorite - Only show for users without pending requests */}
+          {shouldShowUserFeatures() && (
             <Link to="/favorites">
               <FaHeart className="text-lg" />
             </Link>
           )}
 
-          {/* Add New Brand - Only show for pending users */}
-          {loggedIn && userRole === "pending" && (
+          {/* Add New Brand - Only show for pending users without request */}
+          {loggedIn && userRole === "pending" && !hasRequest && (
             <Link
               to="/add-new-brand"
               className="flex items-center gap-1 bg-white text-red-800 px-3 py-1 rounded-full text-sm font-bold hover:bg-gray-100 transition-colors"
@@ -166,24 +230,37 @@ const Navbar = () => {
             </Link>
           )}
 
+          {/* رسالة للمستخدمين الذين لديهم طلب pending */}
+          {loggedIn && userRole === "pending" && hasRequest && (
+            <div className="bg-yellow-500 text-black px-3 py-1 rounded-full text-xs font-bold">
+              Store Request Pending
+            </div>
+          )}
+
           {/* Settings/Dashboard */}
-          {loggedIn && userRole === "seller" ? (
+          {loggedIn && (userRole === "seller" || userRole === "admin") && (
+            <Link
+              to={
+                userRole === "admin" ? "/admin-dashboard" : "/dashboard-seller"
+              }
+            >
+              <FaTachometerAlt className="text-lg" />
+            </Link>
+          )}
+
+          {/* Dashboard for pending users */}
+          {loggedIn && userRole === "pending" && hasRequest && (
             <Link to="/dashboard-seller">
               <FaTachometerAlt className="text-lg" />
             </Link>
-          ) : loggedIn && userRole === "admin" ? (
-            <Link to="/admin-dashboard">
-              <FaTachometerAlt className="text-lg" />
-            </Link>
-          ) : loggedIn && userRole === "pending" ? (
-            <Link to="/dashboard-seller">
-              <FaTachometerAlt className="text-lg" />
-            </Link>
-          ) : loggedIn && userRole === "user" ? (
+          )}
+
+          {/* Settings for pending users without request */}
+          {loggedIn && userRole === "pending" && !hasRequest && (
             <Link to="/settings">
               <FaUser className="text-lg" />
             </Link>
-          ) : null}
+          )}
 
           {/* Login/Register or Logout */}
           {!loggedIn ? (
@@ -210,7 +287,7 @@ const Navbar = () => {
 
       {/* Navigation Links */}
       <div className="flex items-center justify-center space-x-10 py-4 text-sm font-bold">
-        {["Home", "Shop", "Contact", "About", "Services"].map((page, index) => {
+        {getAvailablePages().map((page, index) => {
           const path = page.toLowerCase().replace(" ", "-");
           const isActive = location.pathname.includes(path);
           return (

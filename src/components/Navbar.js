@@ -255,8 +255,8 @@ const Navbar = () => {
             </Link>
           )}
 
-          {/* Settings for pending users without request */}
-          {loggedIn && userRole === "pending" && !hasRequest && (
+          {/* Settings for users only */}
+          {loggedIn && userRole === "user" && (
             <Link to="/settings">
               <FaUser className="text-lg" />
             </Link>

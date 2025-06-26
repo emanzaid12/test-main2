@@ -19,6 +19,7 @@ import {
   FaClock,
   FaUsers,
   FaBell,
+  FaPercentage, // إضافة أيقونة للخصومات
 } from "react-icons/fa";
 import CountUp from "react-countup";
 import {
@@ -54,6 +55,7 @@ import OrderReceived from "./OrderReceived";
 import Messages from "./SellerMessages";
 import Reviews from "./Reviews";
 import BrandSettings from "./BrandSettings";
+import MyDiscount from "./My Discount"; // إضافة صفحة الخصومات
 
 // تسجيل جميع مكونات Chart.js المطلوبة
 ChartJS.register(
@@ -91,6 +93,12 @@ const sidebarItems = [
     icon: <FaEnvelope />,
     label: "Messages",
     sub: "Chat with your customers",
+  },
+  {
+    to: "/seller-myDiscount", // إضافة صفحة الخصومات هنا
+    icon: <FaPercentage />,
+    label: "My Discount",
+    sub: "Manage customer discounts",
   },
   {
     to: "/dashboard/coupon-page",
@@ -259,6 +267,8 @@ const Dashboard = () => {
         return <OrderReceived />;
       case "/dashboard/messages":
         return <Messages />;
+      case "/seller-myDiscount": // إضافة حالة صفحة الخصومات
+        return <MyDiscount />;
       case "/dashboard/reviews":
         return <Reviews />;
       case "/dashboard/brand-settings":

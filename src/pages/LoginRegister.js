@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  FaFacebookF,
-  FaInstagram,
-  FaGoogle,
-  FaGithub,
-  FaEye,
-  FaEyeSlash,
-} from "react-icons/fa";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
 import "../index.css";
 import loginBg from "../assets/images/your-image.png";
 import { Link, useNavigate } from "react-router-dom";
@@ -52,9 +45,6 @@ const LoginRegister = () => {
 
   const handleUserRedirection = (token) => {
     const decoded = parseJwt(token);
-    console.log("Full decoded token:", decoded);
-
-    // البحث عن الـ role في جميع الخصائص الممكنة
     const role =
       decoded?.role ||
       decoded?.Role ||
@@ -63,10 +53,7 @@ const LoginRegister = () => {
       ] ||
       decoded?.[
         "https://schemas.microsoft.com/ws/2008/06/identity/claims/role"
-      ] ||
-      decoded?.["role"];
-
-    // البحث عن الـ status في جميع الخصائص الممكنة
+      ];
     const status =
       decoded?.status ||
       decoded?.Status ||
@@ -78,94 +65,52 @@ const LoginRegister = () => {
       decoded?.[
         "https://schemas.microsoft.com/ws/2008/06/identity/claims/status"
       ];
-      const hasRequest =
-        decoded?.hasRequest ||
-        decoded?.HasRequest ||
-        decoded?.[
-          "http://schemas.microsoft.com/ws/2008/06/identity/claims/hasRequest"
-        ] ||
-        decoded?.[
-          "https://schemas.microsoft.com/ws/2008/06/identity/claims/hasRequest"
-        ];
+    const hasRequest =
+      decoded?.hasRequest ||
+      decoded?.HasRequest ||
+      decoded?.[
+        "http://schemas.microsoft.com/ws/2008/06/identity/claims/hasRequest"
+      ] ||
+      decoded?.[
+        "https://schemas.microsoft.com/ws/2008/06/identity/claims/hasRequest"
+      ];
 
-    console.log("Extracted role:", role, "Type:", typeof role);
-    console.log("Extracted status:", status, "Type:", typeof status);
-    console.log(
-      "Extracted hasRequest:",
-      hasRequest,
-      "Type:",
-      typeof hasRequest
-    );
+    let normalizedRole =
+      typeof role === "number"
+        ? role.toString()
+        : (role || "").toLowerCase().trim();
+    let normalizedStatus =
+      typeof status === "string" ? status.toLowerCase().trim() : "";
+    let hasRequestBoolean =
+      typeof hasRequest === "boolean"
+        ? hasRequest
+        : (hasRequest || "").toLowerCase() === "true";
 
-    // تحويل الـ role إلى string للمقارنة
-    let normalizedRole = "";
-    if (typeof role === "number") {
-      normalizedRole = role.toString();
-    } else if (typeof role === "string") {
-      normalizedRole = role.toLowerCase().trim();
-    }
-
-    // تحويل الـ status إلى string للمقارنة
-    let normalizedStatus = "";
-    if (typeof status === "string") {
-      normalizedStatus = status.toLowerCase().trim();
-    }
-    let hasRequestBoolean = false;
-    if (typeof hasRequest === "string") {
-      hasRequestBoolean = hasRequest.toLowerCase() === "true";
-    } else if (typeof hasRequest === "boolean") {
-      hasRequestBoolean = hasRequest;
-    }
-
-    console.log("Normalized role:", normalizedRole);
-    console.log("Normalized status:", normalizedStatus);
-    console.log("Has request boolean:", hasRequestBoolean);
-
-    // التحقق من الحالة أولاً - إذا كانت pending يذهب إلى dashboard seller
     if (
       hasRequestBoolean &&
       (normalizedRole === "3" || normalizedRole === "pending")
     ) {
-      console.log("Seller with pending request detected - navigating to home");
       alert("You have a pending store request. Please wait for approval.");
       navigate("/");
       return;
     }
 
     if (normalizedRole === "3" || normalizedRole === "pending") {
-      console.log("Pending status detected - navigating to seller dashboard");
       alert(
         "Your account is pending approval. Redirecting to seller dashboard..."
       );
       navigate("/dashboard-seller");
       return;
     }
-    
-    // منطق التوجيه العادي حسب الـ role
+
     if (normalizedRole === "1" || normalizedRole === "seller") {
-      console.log("Seller detected - navigating to seller dashboard");
       alert("Welcome Seller! Redirecting to your dashboard...");
       navigate("/dashboard-seller");
     } else if (normalizedRole === "2" || normalizedRole === "admin") {
-      console.log("Admin detected - navigating to admin dashboard");
       alert("Welcome Admin! Redirecting to admin dashboard...");
       navigate("/admin-dashboard");
-    } else if (
-      normalizedRole === "0" ||
-      normalizedRole === "user" ||
-      normalizedRole === ""
-    ) {
-      console.log("User detected - navigating to home");
-      alert("Welcome User! Redirecting to home...");
-      navigate("/");
     } else {
-      // في حالة عدم التعرف على الـ role
-      console.log(
-        "Unknown role detected:",
-        normalizedRole,
-        "- defaulting to home"
-      );
-      alert("Login successful! Redirecting to home...");
+      alert("Welcome User! Redirecting to home...");
       navigate("/");
     }
   };
@@ -196,13 +141,10 @@ const LoginRegister = () => {
       const data = await response.json();
 
       if (response.ok) {
-        // إذا كان التسجيل ناجح وكان هناك token في الاستجابة
         if (data.token) {
           localStorage.setItem("authToken", data.token);
-          console.log("Registration successful with token - checking status");
           handleUserRedirection(data.token);
         } else {
-          // إذا لم يكن هناك token (قد يحتاج تفعيل)
           alert("Registration successful!");
           navigate("/verify-notice");
         }
@@ -233,7 +175,6 @@ const LoginRegister = () => {
 
       if (response.ok) {
         localStorage.setItem("authToken", data.token);
-        console.log("Login successful - checking user status and role");
         handleUserRedirection(data.token);
       } else {
         alert(`Login failed: ${data?.message || "Invalid email or password."}`);
@@ -246,10 +187,7 @@ const LoginRegister = () => {
 
   return (
     <div className="flex flex-col flex-grow">
-      <main
-        className="flex-grow flex items-center justify-center bg-cover bg-center h-screen"
-        style={{ backgroundImage: `url(${loginBg})` }}
-      >
+      <main className="flex-grow flex items-center justify-center bg-cover bg-center h-screen">
         <div className="w-[950px] h-[550px] bg-white shadow-2xl rounded-[100px] flex overflow-hidden relative transition-all duration-700">
           {/* Sign In */}
           <div
@@ -260,15 +198,6 @@ const LoginRegister = () => {
             }`}
           >
             <h2 className="text-3xl font-bold mb-6 text-center">Sign In</h2>
-            <div className="flex justify-center gap-4 mb-4">
-              <FaFacebookF className="text-2xl text-gray-800 hover:text-red-800 cursor-pointer" />
-              <FaInstagram className="text-2xl text-gray-800 hover:text-red-800 cursor-pointer" />
-              <FaGoogle className="text-2xl text-gray-800 hover:text-red-800 cursor-pointer" />
-              <FaGithub className="text-2xl text-gray-800 hover:text-red-800 cursor-pointer" />
-            </div>
-            <p className="text-sm text-gray-600 mb-4 text-center">
-              or use email and password
-            </p>
             <input
               type="email"
               placeholder="Email"
@@ -318,15 +247,6 @@ const LoginRegister = () => {
             <h2 className="text-3xl font-bold mb-6 text-center">
               Create Account
             </h2>
-            <div className="flex justify-center gap-4 mb-4">
-              <FaFacebookF className="text-2xl text-gray-800 hover:text-red-800 cursor-pointer" />
-              <FaInstagram className="text-2xl text-gray-800 hover:text-red-800 cursor-pointer" />
-              <FaGoogle className="text-2xl text-gray-800 hover:text-red-800 cursor-pointer" />
-              <FaGithub className="text-2xl text-gray-800 hover:text-red-800 cursor-pointer" />
-            </div>
-            <p className="text-sm text-gray-600 mb-4 text-center">
-              or use email for registration
-            </p>
             <input
               type="text"
               placeholder="First Name"

@@ -55,6 +55,8 @@ import ManageSellers from "./pages/Admin/ManageSellers";
 //import SellersReports from "./pages/Admin/SellersReports";
 import Notifications from "./pages/Seller/Notifications";
 import UpdateProduct from "./pages/Seller/UpdateProduct";
+import  ManageOrders from"./pages/Admin/ManageOrders"
+import  MyDiscount from"./pages/Seller/My Discount"
 //import AdminMessages from "./pages/Admin/AdminMessages";
 function App() {
   const { i18n } = useTranslation();
@@ -143,10 +145,11 @@ function App() {
               <Route path="/dashboard" element={<Dashboard />} />
 
               <Route path="/admin/products" element={<ManageProducts />} />
-              {/* <Route path="/admin/orders" element={<ManageOrders />} /> */}
+              <Route path="/admin/orders" element={<ManageOrders />} />
               <Route path="/admin/reviews" element={<ManageReviews />} />
               <Route path="/admin/sellers" element={<ManageSellers />} />
               <Route path="/update-product/:id" element={<UpdateProduct />} />
+              <Route path="/seller-myDiscount"element={<MyDiscount/>}/>
             </Routes>
           </div>
           <Footer />

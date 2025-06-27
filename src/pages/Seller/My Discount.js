@@ -2,17 +2,14 @@ import React, { useState, useEffect } from "react";
 import {
   FaPercentage,
   FaUser,
-  FaBox,
   FaDollarSign,
   FaCalendarAlt,
-  FaSearch,
   FaFilter,
 } from "react-icons/fa";
 
 const MyDiscount = () => {
   const [discounts, setDiscounts] = useState([]);
   const [filteredDiscounts, setFilteredDiscounts] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({
@@ -24,16 +21,14 @@ const MyDiscount = () => {
 
   const API_BASE = "https://shopyapi.runasp.net/api";
 
-  // Helper function to get auth headers (you'll need to implement this based on your auth system)
   const getAuthHeaders = () => {
-    const token = localStorage.getItem("authToken"); // Adjust based on your token storage
+    const token = localStorage.getItem("authToken");
     return {
       "Content-Type": "application/json",
       Authorization: `Bearer ${token}`,
     };
   };
 
-  // Fetch statistics
   const fetchStats = async () => {
     try {
       const [totalResponse, activeResponse, profitResponse] = await Promise.all(
@@ -65,7 +60,6 @@ const MyDiscount = () => {
     }
   };
 
-  // Fetch all discounts based on filter
   const fetchDiscounts = async (status = "all") => {
     try {
       let endpoint;
@@ -90,18 +84,14 @@ const MyDiscount = () => {
       if (response.ok) {
         const data = await response.json();
 
-        // Transform API data to match component structure
         const transformedData = data.map((discount, index) => ({
           id: discount.Id || index,
-          userName: discount.user || "N/A",
-          // You might need to add this to API
-          // Using Store as product for now
-          // Placeholder image
-          originalPrice: 0, // Not available in current API
+          userName: discount.user ,
+          originalPrice: 0,
           discountPercentage: discount.discountPercentage || 0,
-          finalPrice: 0, // Not available in current API
-          profitBefore: 0, // Not available in current API
-          profitAfter: 0, // Not available in current API
+          finalPrice: 0,
+          profitBefore: 0,
+          profitAfter: 0,
           discountDate: discount.createdAt || new Date().toISOString(),
           expiryDate: discount.expiryDate || new Date().toISOString(),
           status:
@@ -112,6 +102,7 @@ const MyDiscount = () => {
               ? "expired"
               : "active"),
           couponCode: discount.couponCode || "N/A",
+        //  userEmail: discount.userEmail || "N/A",
         }));
 
         setDiscounts(transformedData);
@@ -132,31 +123,9 @@ const MyDiscount = () => {
     loadData();
   }, []);
 
-  // Update discounts when filter changes
   useEffect(() => {
-    if (filterStatus !== "all") {
-      fetchDiscounts(filterStatus);
-    } else {
-      fetchDiscounts("all");
-    }
+    fetchDiscounts(filterStatus);
   }, [filterStatus]);
-
-  useEffect(() => {
-    let filtered = discounts;
-
-    if (searchTerm) {
-      filtered = filtered.filter(
-        (discount) =>
-          discount.userName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          discount.productName
-            .toLowerCase()
-            .includes(searchTerm.toLowerCase()) ||
-          discount.couponCode.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    setFilteredDiscounts(filtered);
-  }, [searchTerm, discounts]);
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -203,7 +172,6 @@ const MyDiscount = () => {
         </div>
       </div>
 
-      {/* Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         {[
           {
@@ -252,19 +220,8 @@ const MyDiscount = () => {
         ))}
       </div>
 
-      {/* Filters */}
       <div className="bg-white p-6 rounded-xl shadow-md">
         <div className="flex flex-col md:flex-row gap-4">
-          <div className="flex-1 relative">
-            <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-            <input
-              type="text"
-              placeholder="Search by name, store, or coupon code..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
-            />
-          </div>
           <div className="relative">
             <FaFilter className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             <select
@@ -281,7 +238,6 @@ const MyDiscount = () => {
         </div>
       </div>
 
-      {/* Table */}
       <div className="bg-white rounded-xl shadow-md overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
@@ -289,9 +245,6 @@ const MyDiscount = () => {
               <tr>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-red-800">
                   Customer
-                </th>
-                <th className="px-6 py-4 text-left text-sm font-semibold text-red-800">
-                  Store
                 </th>
                 <th className="px-6 py-4 text-left text-sm font-semibold text-red-800">
                   Coupon Code
@@ -311,7 +264,7 @@ const MyDiscount = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {filteredDiscounts.map((discount, index) => (
+              {filteredDiscounts.map((discount) => (
                 <tr
                   key={discount.id}
                   className="hover:bg-gray-50 transition-colors duration-200"
@@ -329,16 +282,6 @@ const MyDiscount = () => {
                           {discount.userEmail}
                         </p>
                       </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center">
-                        <FaBox className="text-gray-600" />
-                      </div>
-                      <p className="font-medium text-gray-900">
-                        {discount.productName}
-                      </p>
                     </div>
                   </td>
                   <td className="px-6 py-4">
@@ -379,7 +322,6 @@ const MyDiscount = () => {
         </div>
       </div>
 
-      {/* No Result */}
       {filteredDiscounts.length === 0 && (
         <div className="text-center py-12">
           <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mb-4">
@@ -389,7 +331,7 @@ const MyDiscount = () => {
             No Discounts Found
           </h3>
           <p className="text-gray-500">
-            No discounts match your search criteria.
+            No discounts available for the selected filter.
           </p>
         </div>
       )}

@@ -182,7 +182,7 @@ const MyProducts = () => {
                       e.stopPropagation();
                       navigate(`/update-product/${product.productId}`);
                     }}
-                    className="bg-white text-[#800000] font-bold px-3 py-1 rounded hover:bg-gray-100"
+                    className="bg-white text-[#800000] font-bold px-3 py-1 rounded-full hover:bg-gray-100"
                   >
                     Update
                   </button>
@@ -191,7 +191,7 @@ const MyProducts = () => {
                       e.stopPropagation();
                       handleDelete(product.productId);
                     }}
-                    className="bg-red-600 text-white font-bold px-3 py-1 rounded hover:bg-red-700"
+                    className="bg-red-600 text-white font-bold px-3 py-1 rounded-full hover:bg-red-700"
                   >
                     Delete
                   </button>
@@ -247,7 +247,7 @@ const MyProducts = () => {
                     <h3 className="text-2xl font-bold text-[#800000] mb-2">
                       {selectedProduct.name}
                     </h3>
-                    <p className="text-3xl font-bold text-green-600 mb-2">
+                    <p className="text-3xl font-bold text-black-600 mb-2">
                       {selectedProduct.price} LE
                     </p>
                   </div>
@@ -308,7 +308,7 @@ const MyProducts = () => {
                           `/update-product/${selectedProduct.productId}`
                         );
                       }}
-                      className="bg-[#800000] text-white font-bold px-6 py-2 rounded hover:bg-[#600000] transition"
+                      className="bg-[#800000] text-white font-bold px-6 py-2 rounded-full hover:bg-[#600000] transition"
                     >
                       Update Product
                     </button>
@@ -317,7 +317,7 @@ const MyProducts = () => {
                         closeDetails();
                         handleDelete(selectedProduct.productId);
                       }}
-                      className="bg-red-600 text-white font-bold px-6 py-2 rounded hover:bg-red-700 transition"
+                      className="bg-red-700 text-white font-bold px-6 py-2 rounded-full hover:bg-red-700 transition"
                     >
                       Delete Product
                     </button>

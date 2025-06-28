@@ -200,18 +200,10 @@ const ReviewOrder = () => {
 
         {/* Payment Method Card */}
         <div className="bg-white rounded-lg shadow-md p-6">
-          <h4 className="text-gray-800 font-semibold mb-2">Payment Method</h4>
-          <p className="text-sm text-gray-700 capitalize mb-2">
-            {payment?.method || "Cash on Delivery"}
-          </p>
-          {payment?.method === "visa" && (
-            <div className="space-y-1 text-sm text-gray-700">
-              <p>Name on Card: {payment.nameOnCard}</p>
-              <p>Card Number: **** **** **** {payment.cardNumber?.slice(-4)}</p>
-              <p>Expiry: {payment.expiry}</p>
-            </div>
-          )}
-        </div>
+  <h4 className="text-gray-800 font-semibold mb-2">Payment Method</h4>
+  <p className="text-sm text-gray-700">Cash on Delivery</p>
+</div>
+
       </div>
     </div>
   );

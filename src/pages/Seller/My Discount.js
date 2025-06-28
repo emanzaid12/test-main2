@@ -163,12 +163,12 @@ const MyDiscount = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="text-center mt-4">
         <div>
           <h1 className="text-3xl font-bold text-red-800">My Discounts</h1>
-          <p className="text-gray-600 mt-1">
-            Manage discounts and offers provided to customers
-          </p>
+  <p className="text-gray-600 mt-1">
+    Manage discounts and offers provided to customers
+  </p>
         </div>
       </div>
 
@@ -227,9 +227,9 @@ const MyDiscount = () => {
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value)}
-              className="pl-10 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+              className="pl-10 pr-8 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-700 focus:border-transparent"
             >
-              <option value="all">All Status</option>
+              <option value="all" >All Status</option>
               <option value="active">Active</option>
               <option value="used">Used</option>
               <option value="expired">Expired</option>

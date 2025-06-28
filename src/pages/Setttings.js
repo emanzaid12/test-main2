@@ -25,6 +25,8 @@ import {
   FaTools,
   FaRegFileAlt,
 } from "react-icons/fa";
+import { FaGift } from "react-icons/fa";
+import { Link } from "react-router-dom";
 import faqImage from "../assets/images/FAQ1.jpg";
 // مصفوفة الدول
 const countryOptions = [
@@ -936,7 +938,7 @@ const Settings = () => {
                   <button
                     type="button"
                     onClick={() => setShowChangePassword(true)}
-                    className="bg-blue-600 text-white px-6 py-2 rounded-full hover:bg-blue-500 transform hover:scale-105 transition-all duration-300"
+                    className="bg-red-50 text-red-800 px-6 py-2 rounded-full hover:bg-red-700 hover:text-white transform hover:scale-105 transition-all duration-300"
                   >
                     Change Password
                   </button>
@@ -1372,14 +1374,14 @@ const Settings = () => {
                             confirm: false,
                           });
                         }}
-                        className="px-6 py-2 text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                        className="px-6 py-2 text-red-800 border border-red-800 rounded-full hover:bg-gray-50 transition-colors"
                       >
                         Cancel
                       </button>
                       <button
                         type="submit"
                         disabled={passwordLoading}
-                        className="px-6 py-2 bg-red-800 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+                        className="px-6 py-2 bg-red-800 text-white rounded-full hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
                       >
                         {passwordLoading && (
                           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
@@ -1523,13 +1525,14 @@ const Settings = () => {
                           <button
                             onClick={() => fetchOrderDetails(order.orderId)}
                             disabled={loadingDetails}
-                            className="px-4 py-2 text-sm bg-red-800 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
+                            className="px-4 py-2 text-sm bg-red-800 text-white rounded-full hover:bg-red-700 transition-colors disabled:opacity-50"
                           >
                             {loadingDetails ? "Loading..." : "View Details"}
                           </button>
                           <button
                             onClick={() => handleTrackOrder(order.orderId)}
-                            className="px-4 py-2 text-sm bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                            className="px-4 py-2 text-sm text-red-800 bg-white border border-red-800 rounded-full hover:bg-red-800 hover:text-white transition-colors
+"
                           >
                             Order Tracking
                           </button>
@@ -2095,9 +2098,7 @@ const Settings = () => {
 
               {/* Buttons */}
               <div className="flex justify-end mt-6 space-x-4">
-                <button className="bg-red-100 text-red-700 px-6 py-2 rounded-full font-semibold transition-transform transform hover:scale-105 hover:bg-red-200">
-                  Decline
-                </button>
+                
                 <button className="bg-red-800 text-white px-6 py-2 rounded-full font-semibold transition-transform transform hover:scale-105 hover:bg-red-700">
                   Agree
                 </button>
@@ -2155,7 +2156,7 @@ const Settings = () => {
               </div>
             ) : notifications.length === 0 ? (
               <div className="flex flex-col items-center justify-center p-16 text-center space-y-6">
-                <FaBell className="text-red-800 text-6xl opacity-30" />
+                <FaBell className="text-red-800 text-6xl " />
                 <h2 className="text-xl font-semibold text-gray-700">
                   No Notifications Yet
                 </h2>
@@ -2232,6 +2233,7 @@ const Settings = () => {
   };
 
    const navItem = (id, icon, label, description) => (
+    
     <li
       onClick={() => setActiveTab(id)}
       className={`cursor-pointer ${activeTab === id ? "text-gray-300" : ""}`}
@@ -2343,6 +2345,17 @@ const Settings = () => {
             "Notifications",
             "View alerts and updates"
           )}
+          <li className="mt-6">
+            <Link
+              to="/loyalty-discount"
+              className="flex items-center gap-3 text-red-200 font-medium hover:text-white transition-colors duration-200"
+            >
+              <FaGift /> Loyalty Discount
+            </Link>
+            <p className="ml-7 text-red-200 text-xs">
+              View your loyalty level and active coupon
+            </p>
+          </li>
 
           {/* Logout */}
           <li className="mt-6">

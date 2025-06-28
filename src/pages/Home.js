@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Categories, mockData } from "../assets/mockData";
-import HeroImage from "../assets/images/hero-page.jpg";
+import HeroImage from "../assets/images/99.jpg";
 import InfoSection from "../components/InfoSection";
-import CategorySection from "../components/CategorySection";
+
 import { setProducts } from "../redux/productSlice";
 import { useDispatch, useSelector } from "react-redux";
 import ProductCard from "../components/ProductCard";
@@ -124,32 +124,43 @@ const Home = () => {
     <div>
       <div className="bg-white mt-2 px-4 md:px-16 lg:px-24">
         {/* Hero Section */}
-        <div className="container mx-auto py-4 flex flex-col md:flex-row space-x-0 md:space-x-4">
-          <div className="relative w-full h-[500px] flex justify-center items-center">
-            <img
-              src={HeroImage}
-              alt="Hero"
-              className="h-full w-full object-cover"
-            />
-            <div className="absolute top-1/4 left-10 px-4 md:px-0">
-              <h2 className="text-3xl md:text-4xl font-bold text-white text-center md:text-left">
-                WELCOME TO SHOP
-              </h2>
-              <p className="text-xl md:text-2xl mt-2.5 font-bold text-gray-800 text-center md:text-left">
-                MILLIONS+ PRODUCTS
-              </p>
-              <button className="bg-red-600 px-8 py-3 text-white mt-6 hover:bg-red-700 transform transition-transform duration-300 hover:scale-105 block mx-auto md:mx-0">
-                SHOP NOW
-              </button>
-            </div>
-          </div>
-        </div>
+        <div className="container mx-auto py-4 flex flex-col md:flex-row">
+  <div className="relative w-full h-[600px]">
+    <img
+      src={HeroImage}
+      alt="Hero"
+      className="h-full w-full object-cover"
+    />
+    <div
+      className="absolute flex flex-col items-start mt-9"
+      style={{
+        top: '40%',
+        left: '6%',
+        transform: 'translateY(-50%)',
+      }}
+    >
+      <h2 className="text-3xl md:text-4xl font-bold text-white text-left">
+        WELCOME TO OUR E-COMMERCE
+      </h2>
+      <p className="text-xl md:text-2xl mt-2.5 font-bold text-gray-200 text-left">
+        SPARK UP
+      </p>
+    <button
+  onClick={() => (window.location.href = "/shop")}
+  className="border-2 border-red-800 text-red-800 bg-white px-8 py-3 mt-12 rounded-full transform hover:scale-105 transition-colors duration-300 self-start"
+>
+  SHOP NOW
+</button>
+
+
+    </div>
+  </div>
+</div>
 
         {/* Info Section */}
         <InfoSection />
 
-        {/* Category Section */}
-        <CategorySection />
+       
 
         {/* ✅ Top Products Section */}
         <div className="container mx-auto py-12">

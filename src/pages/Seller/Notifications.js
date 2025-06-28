@@ -138,7 +138,8 @@ const Notifications = () => {
 
   if (error) {
     return (
-      <div className="p-8 min-h-screen bg-gradient-to-br from-red-50 to-orange-50">
+    <div className="p-6 min-h-screen bg-gray-50">
+
         <div className="flex flex-col items-center justify-center min-h-[60vh]">
           <FaExclamationTriangle className="text-red-600 text-4xl mb-4" />
           <h3 className="text-xl font-semibold text-red-800 mb-2">
@@ -157,7 +158,8 @@ const Notifications = () => {
   }
 
   return (
-    <div className="p-6 min-h-screen bg-gradient-to-br from-red-50 to-orange-50">
+    <div className="p-8 min-h-screen bg-gray-50">
+
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -177,7 +179,7 @@ const Notifications = () => {
               fetchNotifications();
               fetchUnreadCount();
             }}
-            className="px-4 py-2 bg-white text-red-800 border-2 border-red-800 rounded-lg hover:bg-red-800 hover:text-white transition-all duration-300 font-medium"
+            className="px-4 py-2 bg-white text-red-800 border-2 border-red-800 rounded-full hover:bg-red-800 hover:text-white transition-all duration-300 font-medium"
           >
             Refresh
           </button>

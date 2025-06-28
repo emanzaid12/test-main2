@@ -21,6 +21,11 @@ const LoginRegister = () => {
   const [signInEmail, setSignInEmail] = useState("");
   const [signInPassword, setSignInPassword] = useState("");
 
+  // Message states
+  const [signInMessage, setSignInMessage] = useState("");
+  const [signUpMessage, setSignUpMessage] = useState("");
+  const [messageType, setMessageType] = useState(""); // "success", "error", "info"
+
   const navigate = useNavigate();
 
   const inputFieldStyle =
@@ -90,34 +95,56 @@ const LoginRegister = () => {
       hasRequestBoolean &&
       (normalizedRole === "3" || normalizedRole === "pending")
     ) {
-      alert("You have a pending store request. Please wait for approval.");
-      navigate("/");
+      setSignInMessage(
+        "You have a pending store request. Please wait for approval."
+      );
+      setMessageType("info");
+      setTimeout(() => navigate("/"), 2000);
       return;
     }
 
     if (normalizedRole === "3" || normalizedRole === "pending") {
-      alert(
+      setSignInMessage(
         "Your account is pending approval. Redirecting to seller dashboard..."
       );
-      navigate("/dashboard-seller");
+      setMessageType("info");
+      setTimeout(() => navigate("/dashboard-seller"), 2000);
       return;
     }
 
     if (normalizedRole === "1" || normalizedRole === "seller") {
-      alert("Welcome Seller! Redirecting to your dashboard...");
-      navigate("/dashboard-seller");
+      setSignInMessage("Welcome Seller! Redirecting to your dashboard...");
+      setMessageType("success");
+      setTimeout(() => navigate("/dashboard-seller"), 2000);
     } else if (normalizedRole === "2" || normalizedRole === "admin") {
-      alert("Welcome Admin! Redirecting to admin dashboard...");
-      navigate("/admin-dashboard");
+      setSignInMessage("Welcome Admin! Redirecting to admin dashboard...");
+      setMessageType("success");
+      setTimeout(() => navigate("/admin-dashboard"), 2000);
     } else {
-      alert("Welcome User! Redirecting to home...");
-      navigate("/");
+      setSignInMessage("Welcome User! Redirecting to home...");
+      setMessageType("success");
+      setTimeout(() => navigate("/"), 2000);
     }
   };
 
   const handleSignUp = async () => {
+    setSignUpMessage("");
+
     if (signUpPassword !== signUpConfirmPassword) {
-      alert("Passwords do not match");
+      setSignUpMessage("Passwords do not match");
+      setMessageType("error");
+      return;
+    }
+
+    if (
+      !signUpFirstName ||
+      !signUpLastName ||
+      !signUpEmail ||
+      !signUpPassword ||
+      !signUpUserName
+    ) {
+      setSignUpMessage("Please fill in all required fields");
+      setMessageType("error");
       return;
     }
 
@@ -143,21 +170,52 @@ const LoginRegister = () => {
       if (response.ok) {
         if (data.token) {
           localStorage.setItem("authToken", data.token);
-          handleUserRedirection(data.token);
+          setSignUpMessage("Registration successful! Redirecting...");
+          setMessageType("success");
+          setTimeout(() => handleUserRedirection(data.token), 1500);
         } else {
-          alert("Registration successful!");
-          navigate("/verify-notice");
+          setSignUpMessage(
+            "Registration successful! Please check your email for verification."
+          );
+          setMessageType("success");
+          setTimeout(() => navigate("/verify-notice"), 2000);
         }
       } else {
-        alert(`Registration failed: ${data?.message || "An error occurred."}`);
+        if (data?.message) {
+          if (data.message.includes("Email")) {
+            setSignUpMessage(
+              "This email is already registered. Please use a different email."
+            );
+          } else if (data.message.includes("Username")) {
+            setSignUpMessage(
+              "This username is already taken. Please choose a different one."
+            );
+          } else {
+            setSignUpMessage(data.message);
+          }
+        } else {
+          setSignUpMessage("Registration failed. Please try again.");
+        }
+        setMessageType("error");
       }
     } catch (error) {
       console.error("Registration error:", error);
-      alert("An error occurred while connecting to the API. Please try again.");
+      setSignUpMessage(
+        "Network error. Please check your connection and try again."
+      );
+      setMessageType("error");
     }
   };
 
   const handleSignIn = async () => {
+    setSignInMessage("");
+
+    if (!signInEmail || !signInPassword) {
+      setSignInMessage("Please enter both email and password");
+      setMessageType("error");
+      return;
+    }
+
     try {
       const response = await fetch(
         "https://shopyapi.runasp.net/api/Auth/login",
@@ -175,13 +233,48 @@ const LoginRegister = () => {
 
       if (response.ok) {
         localStorage.setItem("authToken", data.token);
-        handleUserRedirection(data.token);
+        setSignInMessage("Login successful! Redirecting...");
+        setMessageType("success");
+        setTimeout(() => handleUserRedirection(data.token), 1500);
       } else {
-        alert(`Login failed: ${data?.message || "Invalid email or password."}`);
+        if (data?.message) {
+          if (data.message.includes("email")) {
+            setSignInMessage(
+              "Invalid email address. Please check and try again."
+            );
+          } else if (data.message.includes("password")) {
+            setSignInMessage("Incorrect password. Please try again.");
+          } else {
+            setSignInMessage(data.message);
+          }
+        } else {
+          setSignInMessage(
+            "Invalid email or password. Please check your credentials."
+          );
+        }
+        setMessageType("error");
       }
     } catch (error) {
       console.error("Login error:", error);
-      alert("An error occurred while connecting to the API. Please try again.");
+      setSignInMessage(
+        "Invalid email or password. Please check your credentials."
+      );
+      setMessageType("error");
+    }
+  };
+
+  const getMessageStyle = (type) => {
+    const baseStyle =
+      "text-center text-sm mb-4 p-2 rounded-md transition-all duration-300";
+    switch (type) {
+      case "success":
+        return `${baseStyle} bg-green-100 text-green-700 border border-green-300`;
+      case "error":
+        return `${baseStyle} bg-red-100 text-red-700 border border-red-300`;
+      case "info":
+        return `${baseStyle} bg-blue-100 text-blue-700 border border-blue-300`;
+      default:
+        return `${baseStyle} bg-gray-100 text-gray-700`;
     }
   };
 
@@ -191,13 +284,20 @@ const LoginRegister = () => {
         <div className="w-[950px] h-[550px] bg-white shadow-2xl rounded-[100px] flex overflow-hidden relative transition-all duration-700">
           {/* Sign In */}
           <div
-            className={`w-1/2 p-10 absolute top-0 h-full transition-all duration-700 ${
+            className={`w-1/2 p-10 mt-[70px] absolute top-0 h-full transition-all duration-700 ${
               isSignIn
                 ? "translate-x-0 opacity-100 z-20"
                 : "-translate-x-full opacity-0 z-0 pointer-events-none"
             }`}
           >
             <h2 className="text-3xl font-bold mb-6 text-center">Sign In</h2>
+
+            {signInMessage && (
+              <div className={getMessageStyle(messageType)}>
+                {signInMessage}
+              </div>
+            )}
+
             <input
               type="email"
               placeholder="Email"
@@ -247,6 +347,13 @@ const LoginRegister = () => {
             <h2 className="text-3xl font-bold mb-6 text-center">
               Create Account
             </h2>
+
+            {signUpMessage && (
+              <div className={getMessageStyle(messageType)}>
+                {signUpMessage}
+              </div>
+            )}
+
             <input
               type="text"
               placeholder="First Name"
@@ -356,7 +463,11 @@ const LoginRegister = () => {
               </p>
               <button
                 className="text-sm text-white hover:underline"
-                onClick={() => setIsSignIn(!isSignIn)}
+                onClick={() => {
+                  setIsSignIn(!isSignIn);
+                  setSignInMessage("");
+                  setSignUpMessage("");
+                }}
               >
                 {isSignIn ? "Sign Up" : "Sign In"}
               </button>

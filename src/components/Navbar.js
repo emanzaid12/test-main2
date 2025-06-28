@@ -7,7 +7,10 @@ import {
   FaHandsHelping,
   FaTachometerAlt,
   FaPlus,
+  
 } from "react-icons/fa";
+import { FaComments } from "react-icons/fa";
+
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { setSearchTerm } from "../redux/productSlice";
@@ -104,11 +107,11 @@ const Navbar = () => {
   const loggedIn = isLoggedIn();
 
   const handleSearch = (e) => {
-    e.preventDefault();
-    dispatch(setSearchTerm(searchTerm));
-    navigate("/filter-data");
-  };
+  e.preventDefault();
+  if (searchTerm.trim() === "") return;
+navigate(`/filter-data?search=${encodeURIComponent(searchTerm)}`);
 
+};
   const handleLogout = () => {
     localStorage.removeItem("authToken");
     navigate("/");
@@ -163,9 +166,16 @@ const Navbar = () => {
     let pages = ["Home", "Shop", "Contact", "About", "Services"];
 
     // إخفاء Contact للـ seller أو pending
-    if (loggedIn && (userRole === "seller" || userRole === "pending")) {
-      pages = pages.filter((page) => page !== "Contact");
-    }
+    
+     if (
+    loggedIn &&
+    (userRole === "seller" ||
+     userRole === "pending" ||
+     userRole === "admin")
+  ) {
+    pages = pages.filter((page) => page !== "Contact");
+  }
+
 
     return pages;
   };
@@ -201,6 +211,10 @@ const Navbar = () => {
         {/* Icons + Login/Register/Logout */}
         <div className="flex items-center space-x-4">
           {/* Cart - Only show for users without pending requests */}
+          <Link to="/chatbot">
+  <FaComments className="text-lg hover:text-gray-300 transition-colors" title="ChatBot" />
+</Link>
+
           {shouldShowUserFeatures() && (
             <Link to="/cart" className="relative">
               <FaShoppingCart className="text-lg" />
@@ -210,6 +224,7 @@ const Navbar = () => {
                 </span>
               )}
             </Link>
+            
           )}
 
           {/* Favorite - Only show for users without pending requests */}

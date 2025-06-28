@@ -209,7 +209,7 @@ const UpdateProduct = () => {
             <div className="text-center mt-6">
               <button
                 type="submit"
-                className="bg-[#800000] text-white px-8 py-2 rounded-lg font-semibold hover:bg-[#600000] transition"
+                className="bg-red-700 hover:bg-red-800 text-white py-2 px-6 rounded-full transition-transform hover:scale-105"
               >
                 Save Changes
               </button>

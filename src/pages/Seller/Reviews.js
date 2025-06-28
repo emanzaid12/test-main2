@@ -346,8 +346,8 @@ const Reviews = () => {
                             disabled={ratingLoading[review.reviewId]}
                             className={`flex items-center gap-2 px-3 py-2 rounded-full text-sm transition-all ${
                               review.sellerRating === 1
-                                ? "bg-green-500 text-white"
-                                : "bg-gray-200 text-gray-700 hover:bg-green-100"
+                                ? "bg-[#800000] text-white"
+      : "bg-gray-200 text-gray-700 hover:bg-[#800000] hover:text-white"
                             } disabled:opacity-50`}
                           >
                             <FaThumbsUp />

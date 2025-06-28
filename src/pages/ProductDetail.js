@@ -213,7 +213,7 @@ const ProductDetail = () => {
       </div>
       <p className="text-gray-600 italic">"{review.comment}"</p>
       <p className="text-xs text-gray-400 mt-2 text-right">
-        {new Date(review.createdAt).toLocaleDateString()} -{" "}
+        {new Date(review.createdAt).toLocaleDateString()} - {" "}
         {new Date(review.createdAt).toLocaleTimeString()}
       </p>
     </div>
@@ -221,58 +221,46 @@ const ProductDetail = () => {
 
   return (
     <div className="container mx-auto py-8 px-4 md:px-16 lg:px-24">
-      <div className="flex flex-col md:flex-row gap-x-16">
-        <div className="md:w-1/2 py-4 shadow-md md:px-8 h-96 flex justify-center">
-          <img src={imageUrl} alt={product.name} className="h-full" />
+      <div className="flex flex-col md:flex-row gap-x-8">
+        <div className="md:w-1/2 relative bg-white p-4 rounded-lg shadow-md flex justify-center items-center h-[400px]">
+          <img src={imageUrl} alt={product.name} className="max-h-full" />
+          <button
+            onClick={handleToggleFavorite}
+            className="absolute top-4 left-4 text-red-600 hover:text-red-800"
+          >
+            {isFavorite ? <FaHeart size={26} /> : <FaRegHeart size={26} />}
+          </button>
         </div>
 
-        <div className="md:w-1/2 p-4 shadow-md md:p-16 flex flex-col items-center gap-y-2">
-          <div className="flex justify-between items-center w-full mb-2">
-            <h2 className="text-3xl font-semibold">{product.name}</h2>
-            <button
-              onClick={handleToggleFavorite}
-              className="text-red-600 hover:text-red-800 focus:outline-none"
-            >
-              {isFavorite ? <FaHeart size={30} /> : <FaRegHeart size={30} />}
-            </button>
+        <div className="md:w-1/2 bg-white p-6 rounded-lg shadow-md flex flex-col gap-4">
+          <h2 className="text-2xl text-red-800 font-bold">{product.name}</h2>
+          <div className="flex flex-row items-center gap-6">
+  <p className="text-2xl text-gray-800 font-bold">${product.price?.toFixed(2)}</p>
+  <div className="flex items-center gap-2">
+    <span className="text-gray-600">Qty</span>
+    <input
+      type="number"
+      min="1"
+      className="border p-1 w-16 rounded text-center"
+      defaultValue="1"
+      disabled
+    />
+  </div>
+</div>
+
+          <div>
+            <h3 className="text-lg font-semibold">Product Description</h3>
+            <p className="text-gray-600">{product.description || "No description available."}</p>
           </div>
-
-          <p className="text-xl font-semibold text-gray-800 mb-4">
-            ${product.price?.toFixed(2)}
-          </p>
-
-          <div className="flex items-center mb-4 gap-x-2">
-            <input
-              type="number"
-              min="1"
-              className="border p-1 w-16"
-              defaultValue="1"
-              disabled
-            />
+          <div className="flex justify-center">
             <button
-              className="bg-red-600 text-white py-1.5 px-4 hover:bg-red-800"
+              className="bg-red-700 hover:bg-red-800 text-white py-2 px-6 rounded-full transition-transform hover:scale-105"
               onClick={handleToggleCart}
             >
               Add to Cart
             </button>
           </div>
-
-          <div className="flex flex-col gap-y-4 mt-4">
-            <p className="flex items-center">
-              <FaCarSide className="mr-1" />
-              Delivery & Return
-            </p>
-            <p className="flex items-center">
-              <FaQuestion className="mr-1" />
-              Ask a Question
-            </p>
-          </div>
         </div>
-      </div>
-
-      <div className="mt-8">
-        <h3 className="text-xl font-bold mb-2">Product Description</h3>
-        <p>{product.description || "No description available."}</p>
       </div>
 
       <div className="mt-10">
@@ -306,7 +294,7 @@ const ProductDetail = () => {
 
       <div className="mt-10">
         <h3 className="text-xl font-bold mb-2">Write a Review</h3>
-        <form onSubmit={handleSubmitReview} className="space-y-4">
+        <form onSubmit={handleSubmitReview} className="space-y-4 mt-6">
           <div>
             <label className="block font-medium">Rating</label>
             <input
@@ -317,28 +305,31 @@ const ProductDetail = () => {
               onChange={(e) =>
                 setReviewData({ ...reviewData, rating: e.target.value })
               }
-              className="border p-2 rounded w-20"
+              className="border p-2 rounded w-20 focus:outline-none focus:ring-2 focus:ring-[#800020]"
               required
             />
           </div>
           <div>
             <label className="block font-medium">Comment</label>
             <textarea
+              placeholder="Write your comment"
               value={reviewData.comment}
               onChange={(e) =>
                 setReviewData({ ...reviewData, comment: e.target.value })
               }
-              className="border p-2 rounded w-full"
+              className="border p-2 rounded w-full focus:outline-none focus:ring-2 focus:ring-[#800020]"
               rows="3"
               required
             ></textarea>
           </div>
-          <button
-            type="submit"
-            className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-          >
-            Submit Review
-          </button>
+          <div className="flex justify-center">
+            <button
+              type="submit"
+              className="bg-red-700 hover:bg-red-800 text-white px-6 py-3 rounded-full text-lg transition-transform hover:scale-105"
+            >
+              Submit Review
+            </button>
+          </div>
         </form>
       </div>
 

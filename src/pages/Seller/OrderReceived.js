@@ -165,7 +165,7 @@ const OrderReceived = () => {
             <button
               key={status}
               onClick={() => fetchOrders(status)}
-              className="px-4 py-2 bg-[#800000] text-white rounded hover:bg-[#600000] transition"
+              className="px-4 py-2 bg-[#800000] text-white rounded-full hover:bg-[#600000] transition"
             >
               {status}
             </button>

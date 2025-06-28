@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
+import {
+  FaClock,
+  FaCheckCircle,
+  FaCog,
+  FaTruck,
+  FaBoxOpen,
+  FaTimesCircle,
+  FaClipboardList,
+} from "react-icons/fa";
 
 const OrderTracking = () => {
   const { orderId } = useParams();
@@ -75,17 +84,10 @@ const OrderTracking = () => {
     }
   };
 
-  const handleTrackOrder = (e) => {
-    e.preventDefault();
-    if (orderIdInput.trim()) {
-      navigate(`/order-tracking/${orderIdInput.trim()}`);
-    }
-  };
-
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {
       case "pending":
-        return "text-yellow-600 bg-yellow-100";
+        return "text-red-800 bg-red-50";
       case "confirmed":
         return "text-blue-600 bg-blue-100";
       case "processing":
@@ -102,21 +104,22 @@ const OrderTracking = () => {
   };
 
   const getStatusIcon = (status) => {
+    const color = "text-red-800";
     switch (status?.toLowerCase()) {
       case "pending":
-        return "⏳";
+        return <FaClock className={color} />;
       case "confirmed":
-        return "✅";
+        return <FaCheckCircle className={color} />;
       case "processing":
-        return "⚙️";
+        return <FaCog className={color} />;
       case "shipped":
-        return "🚚";
+        return <FaTruck className={color} />;
       case "delivered":
-        return "📦";
+        return <FaBoxOpen className={color} />;
       case "cancelled":
-        return "❌";
+        return <FaTimesCircle className={color} />;
       default:
-        return "📋";
+        return <FaClipboardList className={color} />;
     }
   };
 
@@ -126,34 +129,6 @@ const OrderTracking = () => {
         <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center">
           Order Tracking
         </h1>
-
-        {!initialOrderId && !loading && !orderDetails && !error && (
-          <p className="text-center text-gray-500 mb-6">
-            No order ID provided. Please enter an order ID above.
-          </p>
-        )}
-
-        {!orderId && (
-          <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-            <h2 className="text-xl font-semibold mb-4">Track Your Order</h2>
-            {/* <form onSubmit={handleTrackOrder} className="flex gap-4">
-              <input
-                type="text"
-                value={orderIdInput}
-                onChange={(e) => setOrderIdInput(e.target.value)}
-                placeholder="Enter Order ID"
-                className="flex-1 border border-gray-300 rounded px-4 py-2 focus:outline-none focus:border-red-800"
-                required
-              />
-              { <button
-                type="submit"
-                className="bg-red-800 text-white px-6 py-2 rounded hover:bg-red-700 transition-colors"
-              >
-                Track Order
-              </button> }
-            </form> */}
-          </div>
-        )}
 
         {loading && (
           <div className="text-center">
@@ -174,39 +149,41 @@ const OrderTracking = () => {
               <h2 className="text-2xl font-semibold mb-4">
                 Order #{orderDetails.orderId}
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <p className="text-gray-600">Order Date:</p>
-                  <p className="font-semibold">
-                    {new Date(orderDetails.createdAt).toLocaleDateString()}
-                  </p>
-                </div>
-                <div>
-                  <p className="text-gray-600">Status:</p>
-                  <span
-                    className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
-                      orderDetails.status
-                    )}`}
-                  >
-                    {getStatusIcon(orderDetails.status)} {orderDetails.status}
-                  </span>
-                </div>
-                <div>
-                  <p className="text-gray-600">Total Amount:</p>
-                  <p className="font-semibold text-lg">
-                    ${orderDetails.totalPrice?.toFixed(2)}
-                  </p>
-                </div>
-                {orderDetails.appliedPromoCode && (
-                  <div>
-                    <p className="text-gray-600">Promo Code:</p>
-                    <p className="font-semibold">
-                      {orderDetails.appliedPromoCode}
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
+              <div className="space-y-4">
+
+  {/* Order Date */}
+  <div>
+    <p className="text-gray-600">Order Date:</p>
+    <p className="font-semibold">
+      {new Date(orderDetails.createdAt).toLocaleDateString()}
+    </p>
+  </div>
+
+  {/* Total Amount + Status */}
+  <div>
+    <p className="text-gray-600">Total Amount:</p>
+    <p className="font-semibold text-lg mb-2">
+      ${orderDetails.totalPrice?.toFixed(2)}
+    </p>
+
+    {/* Status تحت Total Amount */}
+    <div>
+      <p className="text-gray-600 ml-2">Status:</p>
+      <span className="inline-block px-3 py-1 rounded-full text-sm font-medium bg-red-50 text-red-800">
+        {orderDetails.status}
+      </span>
+    </div>
+  </div>
+
+  {/* Promo Code */}
+  {orderDetails.appliedPromoCode && (
+    <div>
+      <p className="text-gray-600">Promo Code:</p>
+      <p className="font-semibold">{orderDetails.appliedPromoCode}</p>
+    </div>
+  )}
+</div>
+</div>
 
             <div className="bg-white rounded-lg shadow-md p-6">
               <h3 className="text-xl font-semibold mb-4">Order Items</h3>
@@ -270,26 +247,26 @@ const OrderTracking = () => {
                       </div>
                     </div>
                   ))}
-                </div>
 
-                {trackingData.trackingHistory?.length === 0 && (
-                  <p className="text-gray-600 text-center py-4">
-                    No tracking history available yet.
-                  </p>
-                )}
+                  {trackingData.trackingHistory?.length === 0 && (
+                    <p className="text-gray-600 text-center py-4">
+                      No tracking history available yet.
+                    </p>
+                  )}
+                </div>
               </div>
             )}
 
             <div className="flex gap-4 justify-center">
               <button
                 onClick={() => navigate("/")}
-                className="bg-gray-600 text-white px-6 py-2 rounded hover:bg-gray-700 transition-colors"
+                className="bg-red-50 text-red-800 px-6 py-2 rounded-full hover:bg-red-700 hover:text-white transition-colors"
               >
                 Continue Shopping
               </button>
               <button
                 onClick={() => window.location.reload()}
-                className="bg-red-800 text-white px-6 py-2 rounded hover:bg-red-700 transition-colors"
+                className="bg-red-800 text-white px-6 py-2 rounded-full hover:bg-red-700 transition-colors"
               >
                 Refresh Status
               </button>

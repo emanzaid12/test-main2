@@ -281,7 +281,7 @@ const BuyersPage = () => {
 
           <div className="bg-red-50 border border-red-200 rounded-lg p-3">
             <p className="text-sm text-red-800">
-              💡 The discount will be sent as a notification to the customer and
+               The discount will be sent as a notification to the customer and
               can be used on their next purchase.
             </p>
           </div>
@@ -294,9 +294,9 @@ const BuyersPage = () => {
                 !discountForm.discountPercentage ||
                 !discountForm.expiryDate
               }
-              className="bg-red-800 hover:bg-red-600 disabled:bg-gray-400 disabled:cursor-not-allowed transition transform hover:scale-105 text-white px-8 py-3 rounded-full text-sm font-medium shadow-lg"
+              className="bg-red-800 hover:bg-red-600 disabled:bg-red-700 disabled:cursor-not-allowed transition transform hover:scale-105 text-white px-8 py-3 rounded-full text-sm font-medium shadow-lg"
             >
-              🎉 Send Discount
+              Send Discount
             </button>
           </div>
         </div>

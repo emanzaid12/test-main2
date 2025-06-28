@@ -37,7 +37,7 @@ import AddNewBrand from "./pages/Seller/AddNewBrand";
 import AddYourProducts from "./pages/Seller/AddYourProducts";
 import MyProducts from "./pages/Seller/MyProducts";
 import OrderReceived from "./pages/Seller/OrderReceived";
-import SellerMessages from "./pages/Seller/SellerMessages";
+import MyLoyaltyDiscount from "./pages/MyLoyaltyDiscount";
 import Reviews from "./pages/Seller/Reviews";
 import BrandSettings from "./pages/Seller/BrandSettings";
 import CouponPage from "./pages/Seller/CouponPage";
@@ -50,14 +50,20 @@ import HelpPage from "./pages/Seller/HelpPage";
 import TermsPage from "./pages/Seller/TermsPage";
 import ManageProducts from "./pages/Admin/ManageProducts";
 //import ManageOrders from "./pages/Admin/ManageOrders";
-import ManageReviews from "./pages/Admin/ManageReviews";
+
 import ManageSellers from "./pages/Admin/ManageSellers";
-//import SellersReports from "./pages/Admin/SellersReports";
+import SellersReports from "./pages/Admin/SellersReports";
 import Notifications from "./pages/Seller/Notifications";
 import UpdateProduct from "./pages/Seller/UpdateProduct";
 import  ManageOrders from"./pages/Admin/ManageOrders"
 import  MyDiscount from"./pages/Seller/My Discount"
-//import AdminMessages from "./pages/Admin/AdminMessages";
+import AdminMessages from "./pages/Admin/AdminMessages";
+import ChatBotPage from './pages/ChatBotPage';
+import StoreUpdateRequests from "./pages/Admin/StoreUpdateRequests";
+import AddNewAdmin from "./pages/Admin/AddNewAdmin";
+import AllAdmin from "./pages/Admin/AllAdmin";
+import PlatformSettings from "./pages/Admin/PlatformSettings";
+
 function App() {
   const { i18n } = useTranslation();
 
@@ -115,7 +121,7 @@ function App() {
               />
               <Route path="/dashboard/my-products" element={<MyProducts />} />
               <Route path="/dashboard/orders" element={<OrderReceived />} />
-              <Route path="/dashboard/messages" element={<SellerMessages />} />
+              
               <Route path="/dashboard/reviews" element={<Reviews />} />
               <Route
                 path="/dashboard/brand-settings"
@@ -146,10 +152,17 @@ function App() {
 
               <Route path="/admin/products" element={<ManageProducts />} />
               <Route path="/admin/orders" element={<ManageOrders />} />
-              <Route path="/admin/reviews" element={<ManageReviews />} />
+              <Route path="/admin/messages" element={<AdminMessages />} />
+              <Route path="/admin/all-admins" element={<AllAdmin />} />
+              <Route path="/admin/store-requests" element={<StoreUpdateRequests />} />
+              <Route path="/admin/add-admin" element={<AddNewAdmin />} />
               <Route path="/admin/sellers" element={<ManageSellers />} />
+              <Route path="/admin/sellers-reports" element={<SellersReports />} />
+              <Route path="/admin/platform-settings" element={<PlatformSettings />} />
               <Route path="/update-product/:id" element={<UpdateProduct />} />
               <Route path="/seller-myDiscount"element={<MyDiscount/>}/>
+              <Route path="/chatbot" element={<ChatBotPage />} />
+              <Route path="/loyalty-discount" element={<MyLoyaltyDiscount />} />
             </Routes>
           </div>
           <Footer />

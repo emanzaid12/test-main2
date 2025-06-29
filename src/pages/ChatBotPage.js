@@ -3,23 +3,73 @@ import React, { useState } from "react";
 const ChatBotDemo = () => {
   const [messages, setMessages] = useState([
     { from: "bot", text: "Hello! How can I help you today?" },
-    { from: "user", text: "I'm looking for Flowers." },
   ]);
   const [input, setInput] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSend = () => {
+  const sendMessageToApi = async (messageText) => {
+    try {
+      setLoading(true);
+      const response = await fetch("https://shopyapi.runasp.net/api/ChatChat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          word: messageText,
+          top: 10
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error("Error from server");
+      }
+
+      const responseText = await response.text();
+
+      let parsed;
+      try {
+        parsed = JSON.parse(responseText);
+      } catch {
+        parsed = responseText;
+      }
+
+      if (typeof parsed === "object") {
+        if (Array.isArray(parsed.results)) {
+          return parsed.results;
+        }
+        return [parsed];
+      }
+
+      return [{ name: parsed }];
+    } catch (error) {
+      console.error(error);
+      return [{ name: "Sorry, there was an error." }];
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSend = async () => {
     if (!input.trim()) return;
 
-    const newMessages = [...messages, { from: "user", text: input }];
-    setMessages(newMessages);
+    const userMessage = input;
     setInput("");
 
-    setTimeout(() => {
-      setMessages((prevMessages) => [
-        ...prevMessages,
-        { from: "bot", text: "We have a great collection! Check out our shop." },
-      ]);
-    }, 1000);
+    setMessages((prev) => [...prev, { from: "user", text: userMessage }]);
+
+    const botReplies = await sendMessageToApi(userMessage);
+
+    setMessages((prev) => [
+      ...prev,
+      ...botReplies.map((item) => ({
+        from: "bot",
+        name: item.name || item.word || "No name",
+        image: Array.isArray(item.imageUrls) ? item.imageUrls[0] : null,
+        price: item.price || null,
+        category: item.category || null
+      }))
+    ]);
   };
 
   return (
@@ -40,9 +90,38 @@ const ChatBotDemo = () => {
                   : "bg-gray-100 self-start mr-auto text-left"
               }`}
             >
-              {msg.text}
+              {/* لو في صورة ومعلومات */}
+              {msg.image || msg.price || msg.category ? (
+                <div>
+                  <div className="font-semibold text-lg mb-2">{msg.name}</div>
+                  {msg.image && (
+                    <img
+                      src={msg.image}
+                      alt="Result"
+                      className="rounded-lg mb-2 max-h-48 w-auto"
+                    />
+                  )}
+                  {msg.price && (
+                    <div className="text-sm text-gray-700">
+                      💵 Price: {msg.price} EGP
+                    </div>
+                  )}
+                  {msg.category && (
+                    <div className="text-sm text-gray-500">
+                      🗂️ Category: {msg.category}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div>{msg.text}</div>
+              )}
             </div>
           ))}
+          {loading && (
+            <div className="p-4 rounded-xl bg-gray-100 self-start mr-auto text-left">
+              Typing...
+            </div>
+          )}
         </div>
 
         {/* Input area */}
@@ -57,6 +136,7 @@ const ChatBotDemo = () => {
           />
           <button
             onClick={handleSend}
+            disabled={loading}
             className="ml-3 text-white bg-red-800 hover:bg-red-700 px-6 py-2 rounded-full transition text-lg"
           >
             ➤
